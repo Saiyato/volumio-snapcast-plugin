@@ -1,0 +1,129 @@
+{
+	"page": {
+		"label": "TRANSLATE.SNAPCAST.SNAPCASTCONF"
+	},
+	"sections": [{
+		"id": "section_hostconf",
+		"element": "section",
+		"label": "TRANSLATE.SNAPCAST.HOST",
+		"icon": "fa-music",
+		"onSave": {
+			"type": "controller",
+			"endpoint": "miscellanea/Kodi",
+			"method": "updateSoundCard"
+		},
+		"saveButton": {
+			"label": "TRANSLATE.SNAPCAST.SAVE",
+			"data": ["host"]
+		},
+		"content": [{
+			"id": "host",
+			"element": "input",
+			"type": "text",
+			"doc": "Snapcast server name or IP.",
+			"label": "TRANSLATE.SNAPCAST.HOSTNAME",
+			"value": "127.0.0.1"
+		}]
+	},
+	{
+		"id": "section_soundconf",
+		"element": "section",
+		"label": "TRANSLATE.SNAPCAST.SOUNDCARD",
+		"icon": "fa-music",
+		"onSave": {
+			"type": "controller",
+			"endpoint": "miscellanea/Kodi",
+			"method": "updateSoundCard"
+		},
+		"saveButton": {
+			"label": "TRANSLATE.SNAPCAST.SAVE",
+			"data": ["soundcard_index"]
+		},
+		"content": [{
+			"id": "soundcard_index",
+			"element": "select",
+			"doc": "The index of the soundcard you wish to use for the SnapCast client output.",
+			"label": "TRANSLATE.SNAPCAST.CARD_INDEX",
+			"value": {
+				"value": 0,
+				"label": "[0] Default rPi soundcard"
+			},
+			"options": []
+		}]
+	},
+	{
+		"id": "section_sampleconf",
+		"element": "section",
+		"label": "TRANSLATE.SNAPCAST.SAMPLING",
+		"icon": "fa-cogs",
+		"onSave": {
+			"type": "controller",
+			"endpoint": "miscellanea/Kodi",
+			"method": "updateBootConfig"
+		},
+		"saveButton": {
+			"label": "TRANSLATE.SNAPCAST.SAVE",
+			"data": ["sample_rate",
+			"bit_depth",
+			"channels"]
+		},
+		"content": [{
+			"id": "sample_rate",
+			"element": "select",
+			"doc": "The number of samples per second.",
+			"label": "TRANSLATE.SNAPCAST.SAMPLE_RATE",
+			"value": {
+				"value": 48,
+				"label": "48000kHz"
+			},
+			"options": []
+		},
+		{
+			"id": "bit_depth",
+			"element": "select",
+			"doc": "The number of bits of information in each sample.",
+			"label": "TRANSLATE.SNAPCAST.BIT_DEPTH",
+			"value": {
+				"value": 16,
+				"label": "16 bits"
+			},
+			"options": []
+		},
+		{
+			"id": "channels",
+			"element": "text",
+			"doc": "The amount of channels to output (2 = stereo).",
+			"label": "TRANSLATE.SNAPCAST.CHANNELS",
+			"value": "2"
+		}]
+	},
+	{
+		"id": "section_loadedconf",
+		"element": "section",
+		"label": "TRANSLATE.SNAPCAST.LOADED",
+		"icon": "fa-cogs",
+		"content": [{
+			"id": "alsa_output_device",
+			"type": "text",
+			"element": "input",
+			"doc": "ALSA output device.",
+			"label": "TRANSLATE.SNAPCAST.OUTPUT_DEVICE",
+			"value": "2"
+		},
+		{
+			"id": "alsa_mixer",
+			"type": "text",
+			"element": "input",
+			"doc": "ALSA mixer.",
+			"label": "TRANSLATE.SNAPCAST.MIXER",
+			"value": "1"
+		},
+		{
+			"id": "software_mixer_index",
+			"element": "text",
+			"doc": "ALSA software mixer index.",
+			"label": "TRANSLATE.SNAPCAST.SOFTWARE_MIXER_INDEX",
+			"value": "2"
+		}]
+	}]
+}

@@ -1,0 +1,114 @@
+
+wget $(curl -s https://api.github.com/repos/badaix/snapcast/releases/latest | grep 'armhf' | cut -d\" -f4)
+
+sudo dpkg -i snapserver_0.10.0_armhf.deb
+sudo dpkg -i snapclient_0.10.0_armhf.deb
+sudo apt-get -f install
+
+http://billauer.co.il/blog/2014/04/alsa-pipe-playback-capture/
+
+mpd.conf
+audio_output {
+    type            "fifo"
+    enabled         "no"
+    name            "multiroom"
+    path            "/tmp/snapfifo"
+    format          "48000:16:2"
+}
+
+asound.conf
+pcm.!default {
+    type plug
+    slave.pcm rate48000Hz
+}
+
+pcm.rate48000Hz {
+    type rate
+    slave {
+        pcm writeFile # Direct to the plugin which will write to a file
+        format S16_LE
+        rate 48000
+		channels 2
+    }
+}
+
+pcm.writeFile {
+    type file
+    slave.pcm null
+    file "/tmp/snapfifo"
+    format "raw"
+}
+
+https://superuser.com/questions/590630/sed-how-to-replace-line-if-found-or-append-to-end-of-file-if-not-found
+http://unix.stackexchange.com/questions/26284/how-can-i-use-sed-to-replace-a-multi-line-string
+
+Spotify-connect-web works perfectly in /etc/asound.conf if you don't use the variable default.
+If you use for example snapcast it works perfectly.
+
+When you start spotify-connect-web you can use the parameter -o snapcast
+e.g. ./spotify-connect-web --username 11111111 --password qwertz --name SpotRasp -o snapcast
+
+pcm.!snapcast {
+type plug
+slave {
+pcm rate48000Hz # Direct default output to the below converter
+}
+}
+
+pcm.rate48000Hz {
+type rate
+slave {
+pcm writeFile # Direct to the plugin which will write to a file
+format S16_LE
+rate 48000
+}
+}
+
+pcm.writeFile {
+type file
+slave.pcm null
+file "/tmp/snapfifo"
+format "raw"
+}
+
+# Remove snapcast config
+sed '/^pcm.!snapcast/,$d' test.txt
+
+Restart ALSA 
+alsactl restore
+
+OPTIONS:
+soundcard -> index
+host (server) -> localhost / remote host
+
+## plugin
+var smixer = self.commandRouter.sharedVars.get('alsa.outputdevicemixer')
+		/*		if (smixer != "None") {
+					mixer = "--mixer " + "'"+ smixer +"'";
+				} else { mixer = ""
+				}
+				*/
+				if (smixer == "None") {
+					mixer = ""
+				}else if (smixer =="undefined") {
+					mixer = ""
+				}else if (smixer =="") {
+					mixer = ""
+				}else { mixer = "--mixer " + "'"+ smixer +"'";
+				}
+			var smindex = self.commandRouter.sharedVars.get('alsa.outputdevice');
+				if (smixer == "SoftMaster") {
+					var smindex = self.getAdditionalConf('audio_interface', 'alsa_controller', 'softvolumenumber');
+					mindex = "--mixer_device_index " + smindex ;	
+				}else if (smixer == "None") {	
+					mindex = ""
+				}else if (smixer == "undefined") {	
+					mindex = ""
+				}else if (smixer == "") {
+					mindex = ""
+				}else { mindex = "--mixer_device_index " + smindex;
+				}
+
+sudo /etc/init.d/snapserver restart
+sudo /etc/init.d/snapclient restart
+sudo /etc/init.d/mpd restart

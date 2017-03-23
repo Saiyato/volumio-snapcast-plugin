@@ -1,0 +1,23 @@
+{
+  "host": {
+    "type": "string",
+    "value": "127.0.0.1"
+  },
+  "soundcard_index": {
+    "type": "string",
+    "value": "1"
+  },  
+  "sample_rate": {
+    "type": "string",
+    "value": "48000"
+  },
+  "bit_depth": {
+    "type": "string",
+    "value": "16"
+  }
+  ,
+  "channels": {
+    "type": "string",
+    "value": "2"
+  }
+}

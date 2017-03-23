@@ -1,0 +1,18 @@
+{
+	"SNAPCAST":{
+	"SNAPCASTCONF":"SnapCast Configuration",
+	"HOST":"SnapCast host settings",
+	"HOSTNAME":"SnapCast host (name/IP)",
+	"SOUNDCARD":"Soundcard settings",
+	"CARD_INDEX":"Index of the soundcard you wish to use",
+	"SAMPLING":"Sampling settings",
+	"SAMPLE_RATE":"Sample rate",
+	"BIT_DEPTH":"Bit depth",
+	"CHANNELS":"Sound channels (2 = stereo)",
+	"LOADED":"Loaded ALSA config",
+	"OUTPUT_DEVICE":"ALSA output device",
+	"MIXER":"ALSA mixer",
+	"SOFTWARE_MIXER_INDEX":"ALSA software mixer index",
+	"SAVE": "Save"
+	}
+}
