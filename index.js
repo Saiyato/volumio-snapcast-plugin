@@ -313,20 +313,45 @@ ControllerSnapCast.prototype.updateConfigFile = function (setting, value, file)
 	return defer.promise;
 }
 
-ControllerSnapCast.prototype.updateAsoundConfig = function (useDac)
+ControllerSnapCast.prototype.updateSnapServer = function (name, mode, format, codec)
 {
 	var self = this;
 	var defer = libQ.defer();
+	
+	var streamName = (name == null ? 'SNAPSERVER' : name);
+	var snapMode = (mode == null ? '' : '\\&mode=' + mode);
+	var snapFormat = (format == null ? '' : '\\&format=' + format);
+	var snapCodec = (codec == null ? '' : '\\&codec=' + codec);
+	
 	var command;
 	
-	if(useDac)
-	{
-		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|0|1|g' /etc/asound.conf";
-	}
-	else
-	{
-		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|1|0|g' /etc/asound.conf";
-	}
+	// sudo sed 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=AUDIOPHONICS\&mode=read&sampleformat=48000:16:2&codec=flac"|g' /etc/default/snapserver
+	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d -s pipe:///tmp/snapfifo?name=" + streamName + snapMode + snapFormat + snapCodec + "\"|g' /etc/default/snapserver";
+	
+	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
+		if(error)
+			console.log(stderr);
+		
+		defer.resolve();
+	});
+	
+	return defer.promise;
+}
+
+ControllerSnapCast.prototype.updateSnapClient = function (streamName, mode)
+{
+	var self = this;
+	var defer = libQ.defer();
+	
+	var snapMode = '';
+	
+	streamName == null ? 'SNAPSERVER' : streamName;
+	mode == null ? '' : '\\&mode=' + mode;
+	
+	var command;
+	
+	// sudo sed 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=AUDIOPHONICS\&mode=read"|g' /etc/default/snapserver
+	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d -s pipe:///tmp/snapfifo?name=" + streamName + snapMode + "\"|g' /etc/default/snapclient";
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)

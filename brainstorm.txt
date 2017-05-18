@@ -1,3 +1,16 @@
+Volumio native implementation:
+
+	alias snapclient="/usr/sbin/snapclient"
+	alias snapserver="/usr/sbin/snapserver"
+	
+	mv /usr/sbin/snapclient /usr/sbin/snapclient.bak
+	mv /usr/sbin/snapserver /usr/sbin/snapserver.bak
+	
+CONFIG:
+
+/etc/default/snap{client | server}
+
+server OPTS = "-d -s pipe:///tmp/snapfifo?name=VTest&mode=read"
 
 wget $(curl -s https://api.github.com/repos/badaix/snapcast/releases/latest | grep 'armhf' | cut -d\" -f4)
 
