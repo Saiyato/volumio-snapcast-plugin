@@ -126,41 +126,53 @@ ControllerSnapCast.prototype.getUIConfig = function() {
     var lang_code = this.commandRouter.sharedVars.get('language_code');
 
 	self.getConf(this.configFile);
-	self.logger.info("Reloaded the config file");
+	self.logger.info("Loaded the previous config.");
 	
 	var ratesdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/sample_rates.json'),  'utf8', {throws: false});
 	var bitdephtdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/bit_depths.json'),  'utf8', {throws: false});
+	var codecdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/codecs.json'),  'utf8', {throws: false});
 	
     self.commandRouter.i18nJson(__dirname+'/i18n/strings_' + lang_code + '.json',
     __dirname + '/i18n/strings_en.json',
     __dirname + '/UIConfig.json')
     .then(function(uiconf)
     {
-        uiconf.sections[0].content[0].value = self.config.get('host');
-		
-		uiconf.sections[1].content[0].value = self.config.get('soundcard_index');
-		
+		uiconf.sections[0].content[0].value = self.config.get('pipe_name');
 		for (var n = 0; n < ratesdata.sample_rates.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[2].content[0].options', {
+			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[1].options', {
 				value: ratesdata.sample_rates[n].rate,
 				label: ratesdata.sample_rates[n].name
 			});
 		}
-		//uiconf.sections[2].content[0].value = self.config.get('sample_rate');
 		
 		for (var n = 0; n < bitdephtdata.bit_depths.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[2].content[1].options', {
+			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[2].options', {
 				value: bitdephtdata.bit_depths[n].bits,
 				label: bitdephtdata.bit_depths[n].name
 			});
 		}
-		//uiconf.sections[2].content[1].value = self.config.get('bit_depth');
 		
-		uiconf.sections[2].content[2].value = self.config.get('channels');
+		uiconf.sections[0].content[3].value = self.config.get('channels');
 		
-		uiconf.sections[3].content[0].value = self.commandRouter.sharedVars.get('alsa.outputdevice');
-		uiconf.sections[3].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
-		uiconf.sections[3].content[2].value = self.getAdditionalConf('audio_interface', 'alsa_controller', 'softvolumenumber');
+		for (var n = 0; n < codecdata.codecs.length; n++){
+			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[4].options', {
+				value: codecdata.codecs[n].extension,
+				label: codecdata.codecs[n].name
+			});
+		}
+		
+		
+        uiconf.sections[1].content[0].value = self.config.get('host');
+		uiconf.sections[1].content[1].value = self.config.get('soundcard');
+		
+		uiconf.sections[2].content[0].value = self.commandRouter.sharedVars.get('alsa.outputdevice');
+		uiconf.sections[2].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
+		uiconf.sections[2].content[2].value = self.getAdditionalConf('audio_interface', 'alsa_controller', 'softvolumenumber');
+		
+		var cards = self.getAlsaCards();
+		self.logger.info(JSON.stringify(cards));
+		
+		self.logger.info("Populated config screen.");
 		
         defer.resolve(uiconf);
     })
@@ -201,20 +213,22 @@ ControllerSnapCast.prototype.getAdditionalConf = function (type, controller, dat
 	return self.commandRouter.executeOnPlugin(type, controller, 'getConfigParam', data);
 };
 
-ControllerSnapCast.prototype.restartKodi = function ()
+ControllerSnapCast.prototype.restartService = function (serviceName)
 {
 	var self = this;
 	var defer=libQ.defer();
 
-	exec("/usr/bin/sudo /bin/systemctl restart kodi.service", {uid:1000,gid:1000}, function (error, stdout, stderr) {
+	var command = "/usr/bin/sudo /bin/systemctl restart " + serviceName;
+	
+	exec(command, {uid:1000,gid:1000}, function (error, stdout, stderr) {
 		if (error !== null) {
-			self.commandRouter.pushConsoleMessage('The following error occurred while starting KODI: ' + error);
-			self.commandRouter.pushToastMessage('error', "Restart failed", "Restarting Kodi failed with error: " + error);
+			self.commandRouter.pushConsoleMessage('The following error occurred while starting ' + serviceName + ': ' + error);
+			self.commandRouter.pushToastMessage('error', "Restart failed", "Restarting " + serviceName + " failed with error: " + error);
 			defer.reject();
 		}
 		else {
-			self.commandRouter.pushConsoleMessage('KODI started');
-			self.commandRouter.pushToastMessage('success', "Restarted Kodi", "Restarted Kodi for the changes to take effect.");
+			self.commandRouter.pushConsoleMessage(serviceName + ' started');
+			self.commandRouter.pushToastMessage('success', "Restarted " + serviceName, "Restarted " + serviceName + " for the changes to take effect.");
 			defer.resolve();
 		}
 	});
@@ -230,18 +244,22 @@ ControllerSnapCast.prototype.updateBootConfig = function (data)
 	return defer.promise;
 }
 
-ControllerSnapCast.prototype.updateSoundConfig = function (data)
+ControllerSnapCast.prototype.updateSnapServer = function (data)
 {
 	var self = this;
 	var defer = libQ.defer();
 	
-	self.config.set('usedac', data['usedac']);
-	self.config.set('kalidelay', data['kalidelay']);
-	self.logger.info("Successfully updated sound configuration");
+	self.config.set('pipe_name', data['pipe_name']);
+	self.config.set('sample_rate', data['sample_rate']);
+	self.config.set('bit_depth', data['bit_depth']);
+	self.config.set('channels', data['channels']);
+	self.config.set('codec', data['codec']);
 	
-	self.writeSoundConfig(data)
+	self.logger.info("Successfully updated snapserver configuration");
+	
+	self.updateSnapServerConfig(data)
 	.then(function (restartService) {
-		self.restartKodi();
+		self.restartService("snapserver");
 	})
 	.fail(function(e)
 	{
@@ -251,42 +269,24 @@ ControllerSnapCast.prototype.updateSoundConfig = function (data)
 	return defer.promise;
 }
 
-ControllerSnapCast.prototype.writeBootConfig = function (config) 
+ControllerSnapCast.prototype.updateSnapClient = function (data)
 {
 	var self = this;
 	var defer = libQ.defer();
 	
-	self.updateConfigFile("gpu_mem_1024", self.config.get('gpu_mem_1024'), "/boot/config.txt")
-	.then(function (gpu512) {
-		self.updateConfigFile("gpu_mem_512", self.config.get('gpu_mem_512'), "/boot/config.txt");
-	})
-	.then(function (gpu256) {
-		self.updateConfigFile("gpu_mem_256", self.config.get('gpu_mem_256'), "/boot/config.txt");
-	})
-	.then(function (hdmi) {
-		self.updateConfigFile("hdmi_force_hotplug", self.config.get('hdmihotplug'), "/boot/config.txt");
+	self.config.set('host', data['host']);
+	self.config.set('soundcard', data['soundcard']);
+	
+	self.logger.info("Successfully updated sound configuration");
+	
+	self.updateSnapClientConfig(data)
+	.then(function (restartService) {
+		self.restartService("snapclient");
 	})
 	.fail(function(e)
 	{
-		defer.reject(new Error());
-	});
-	
-	self.commandRouter.pushToastMessage('success', "Configuration update", "A reboot is required, changes have been made to /boot/config.txt");
-
-	return defer.promise;
-}
-
-ControllerSnapCast.prototype.writeSoundConfig = function (soundConfig)
-{
-	var self = this;
-	var defer = libQ.defer();
-	
-	self.updateAsoundConfig(soundConfig['usedac'])	
-	.then(function (kali) {
-		self.updateKodiConfig(soundConfig['kalidelay']);
+		defer.reject(new error());
 	})
-	
-	self.commandRouter.pushToastMessage('success', "Configuration update", "Successfully updated sound settings");
 	
 	return defer.promise;
 }
@@ -313,20 +313,24 @@ ControllerSnapCast.prototype.updateConfigFile = function (setting, value, file)
 	return defer.promise;
 }
 
-ControllerSnapCast.prototype.updateSnapServer = function (name, mode, format, codec)
+ControllerSnapCast.prototype.updateSnapServerConfig = function (data)
 {
 	var self = this;
 	var defer = libQ.defer();
 	
-	var streamName = (name == null ? 'SNAPSERVER' : name);
-	var snapMode = (mode == null ? '' : '\\&mode=' + mode);
-	var snapFormat = (format == null ? '' : '\\&format=' + format);
-	var snapCodec = (codec == null ? '' : '\\&codec=' + codec);
+	var format = data['sample_rate'].value + ':' + data['bit_depth'].value + ':' + data['channels'];
 	
-	var command;
+	var streamName = (data['pipe_name'] == undefined ? 'SNAPSERVER' : data['pipe_name']);
+	var snapMode = (data['mode'] == undefined ? '\\&mode=read' : '\\&mode=' + data['mode']);
+	var snapFormat = (format == undefined ? '' : '\\&format=' + format);
+	var snapCodec = (data['codec'].value == undefined ? '' : '\\&codec=' + data['codec'].value);
+	
+	// Omit default
+	if(snapFormat == "\\&format=48000:16:2")
+		snapFormat = '';
 	
 	// sudo sed 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=AUDIOPHONICS\&mode=read&sampleformat=48000:16:2&codec=flac"|g' /etc/default/snapserver
-	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d -s pipe:///tmp/snapfifo?name=" + streamName + snapMode + snapFormat + snapCodec + "\"|g' /etc/default/snapserver";
+	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d -s pipe:///tmp/snapfifo?name=" + streamName + snapMode + snapFormat + snapCodec + "\"|g' /etc/default/snapserver";
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)
@@ -338,20 +342,15 @@ ControllerSnapCast.prototype.updateSnapServer = function (name, mode, format, co
 	return defer.promise;
 }
 
-ControllerSnapCast.prototype.updateSnapClient = function (streamName, mode)
+ControllerSnapCast.prototype.updateSnapClientConfig = function (data)
 {
 	var self = this;
 	var defer = libQ.defer();
+		
+	var streamHost = (data['host'] == undefined ? 'localhost' : data['host']);
+	var snapSoundCard = (data['soundcard'] == undefined ? '1' : data['soundcard'].value);
 	
-	var snapMode = '';
-	
-	streamName == null ? 'SNAPSERVER' : streamName;
-	mode == null ? '' : '\\&mode=' + mode;
-	
-	var command;
-	
-	// sudo sed 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=AUDIOPHONICS\&mode=read"|g' /etc/default/snapserver
-	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d -s pipe:///tmp/snapfifo?name=" + streamName + snapMode + "\"|g' /etc/default/snapclient";
+	var	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS=\"-d -h " + streamHost + " -s " + snapSoundCard + "\"|g' /etc/default/snapclient";
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)
@@ -363,35 +362,43 @@ ControllerSnapCast.prototype.updateSnapClient = function (streamName, mode)
 	return defer.promise;
 }
 
-ControllerSnapCast.prototype.updateKodiConfig = function (useKaliDelay)
-{
-	var self = this;
-	var defer = libQ.defer();
-	var command;
-	var secondCommand;
+ControllerSnapCast.prototype.getAlsaCards = function () {
+	var self=this;
+	var cards = [];
 	
-	if(useKaliDelay)
-	{
-		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*audiodelay.*|<audiodelay>0.700000</audiodelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
-		secondCommand = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*subtitledelay.*|<subtitledelay>0.700000</subtitledelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
+	var soundCardDir = '/proc/asound/';
+	var idFile = '/id';
+	var regex = /card(\d+)/;
+	var carddata = fs.readJsonSync(('/volumio/app/plugins/audio_interface/alsa_controller/cards.json'),  'utf8', {throws: false});
+
+	try {
+		var soundFiles = fs.readdirSync(soundCardDir);
+
+
+
+	for (var i = 0; i < soundFiles.length; i++) {
+		var fileName = soundFiles[i];
+		var matches = regex.exec(fileName);
+		var idFileName = soundCardDir + fileName + idFile;
+		if (matches && fs.existsSync(idFileName)) {
+			var id = matches[1];
+			var content = fs.readFileSync(idFileName);
+			var rawname = content.toString().trim();
+			var name = rawname;
+			self.logger.info("RAW name: " + rawname);
+			for (var n = 0; n < carddata.cards.length; n++){
+				var cardname = carddata.cards[n].name.toString().trim();
+				if (cardname === rawname){
+					var name = carddata.cards[n].prettyname;
+				}
+			} cards.push({id: id, name: name});
+
+		}
 	}
-	else
-	{
-		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*audiodelay.*|<audiodelay>0.000000</audiodelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
-		secondCommand = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*subtitledelay.*|<subtitledelay>0.000000</subtitledelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
+	} catch (e) {
+		var namestring = 'No Audio Device Available';
+		cards.push({id: '', name: namestring});
 	}
-	
-	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
-		if(error)
-			console.log(stderr);
-	});
-	
-	exec(secondCommand, {uid:1000, gid:1000}, function (error, stout, stderr) {
-		if(error)
-			console.log(stderr);
-		
-		defer.resolve();
-	});
-	
-	return defer.promise;
-}
+
+	return cards;
+};

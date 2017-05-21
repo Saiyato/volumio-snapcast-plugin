@@ -3,77 +3,40 @@
 		"label": "TRANSLATE.SNAPCAST.SNAPCASTCONF"
 	},
 	"sections": [{
-		"id": "section_hostconf",
-		"element": "section",
-		"label": "TRANSLATE.SNAPCAST.HOST",
-		"icon": "fa-music",
-		"onSave": {
-			"type": "controller",
-			"endpoint": "miscellanea/Kodi",
-			"method": "updateSoundCard"
-		},
-		"saveButton": {
-			"label": "TRANSLATE.SNAPCAST.SAVE",
-			"data": ["host"]
-		},
-		"content": [{
-			"id": "host",
-			"element": "input",
-			"type": "text",
-			"doc": "Snapcast server name or IP.",
-			"label": "TRANSLATE.SNAPCAST.HOSTNAME",
-			"value": "127.0.0.1"
-		}]
-	},
-	{
-		"id": "section_soundconf",
-		"element": "section",
-		"label": "TRANSLATE.SNAPCAST.SOUNDCARD",
-		"icon": "fa-music",
-		"onSave": {
-			"type": "controller",
-			"endpoint": "miscellanea/Kodi",
-			"method": "updateSoundCard"
-		},
-		"saveButton": {
-			"label": "TRANSLATE.SNAPCAST.SAVE",
-			"data": ["soundcard_index"]
-		},
-		"content": [{
-			"id": "soundcard_index",
-			"element": "select",
-			"doc": "The index of the soundcard you wish to use for the SnapCast client output.",
-			"label": "TRANSLATE.SNAPCAST.CARD_INDEX",
-			"value": {
-				"value": 0,
-				"label": "[0] Default rPi soundcard"
-			},
-			"options": []
-		}]
-	},
-	{
 		"id": "section_sampleconf",
 		"element": "section",
-		"label": "TRANSLATE.SNAPCAST.SAMPLING",
-		"icon": "fa-cogs",
+		"label": "TRANSLATE.SNAPCAST.SERVER",
+		"icon": "fa-server",
 		"onSave": {
 			"type": "controller",
-			"endpoint": "miscellanea/Kodi",
-			"method": "updateBootConfig"
+			"endpoint": "miscellanea/SnapCast",
+			"method": "updateSnapServer"
 		},
 		"saveButton": {
 			"label": "TRANSLATE.SNAPCAST.SAVE",
-			"data": ["sample_rate",
-			"bit_depth",
-			"channels"]
+			"data": [
+				"pipe_name",
+				"sample_rate",
+				"bit_depth",
+				"channels",
+				"codec"
+				]
 		},
 		"content": [{
+			"id": "pipe_name",
+			"element": "input",
+			"type": "text",
+			"doc": "Snapcast stream name, as shown in clients.",
+			"label": "TRANSLATE.SNAPCAST.PIPE_NAME",
+			"value": "VOLUMIO"
+		},
+		{
 			"id": "sample_rate",
 			"element": "select",
 			"doc": "The number of samples per second.",
 			"label": "TRANSLATE.SNAPCAST.SAMPLE_RATE",
 			"value": {
-				"value": 48,
+				"value": 48000,
 				"label": "48000kHz"
 			},
 			"options": []
@@ -91,10 +54,59 @@
 		},
 		{
 			"id": "channels",
-			"element": "text",
+			"type": "text",
+			"element": "input",
 			"doc": "The amount of channels to output (2 = stereo).",
 			"label": "TRANSLATE.SNAPCAST.CHANNELS",
 			"value": "2"
+		},
+		{
+			"id": "codec",
+			"element": "select",
+			"doc": "The codec used for the stream.",
+			"label": "TRANSLATE.SNAPCAST.CODEC",
+			"value": {
+				"value": "flac",
+				"label": "Flac (lossless compressed [default])"
+			},
+			"options": []
+		}]
+	},
+	{
+		"id": "section_clientconf",
+		"element": "section",
+		"label": "TRANSLATE.SNAPCAST.CLIENT",
+		"icon": "fa-music",
+		"onSave": {
+			"type": "controller",
+			"endpoint": "miscellanea/SnapCast",
+			"method": "updateSnapClient"
+		},
+		"saveButton": {
+			"label": "TRANSLATE.SNAPCAST.SAVE",
+			"data": [
+				"host",
+				"soundcard"
+				]
+		},
+		"content": [{
+			"id": "host",
+			"element": "input",
+			"type": "text",
+			"doc": "Snapcast server name or IP.",
+			"label": "TRANSLATE.SNAPCAST.HOSTNAME",
+			"value": "localhost"
+		},
+		{
+			"id": "soundcard",
+			"element": "select",
+			"doc": "The soundcard you wish to use for the SnapCast client output. This can be the name or index.",
+			"label": "TRANSLATE.SNAPCAST.SOUNDCARD",
+			"value": {
+				"value": 0,
+				"label": "[0] Default rPi soundcard"
+			},
+			"options": []
 		}]
 	},
 	{

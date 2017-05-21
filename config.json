@@ -1,11 +1,7 @@
 {
-  "host": {
+  "pipe_name": {
     "type": "string",
-    "value": "127.0.0.1"
-  },
-  "soundcard_index": {
-    "type": "string",
-    "value": "1"
+    "value": "VOLUMIO"
   },  
   "sample_rate": {
     "type": "string",
@@ -14,10 +10,21 @@
   "bit_depth": {
     "type": "string",
     "value": "16"
-  }
-  ,
+  },
   "channels": {
     "type": "string",
     "value": "2"
+  },
+  "codec": {
+    "type": "string",
+    "value": "2"
+  },
+  "host": {
+    "type": "string",
+    "value": "localhost"
+  },
+  "soundcard": {
+    "type": "string",
+    "value": "1"
   }
 }
