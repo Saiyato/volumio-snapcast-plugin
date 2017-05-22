@@ -1,4 +1,8 @@
 {
+  "server_enabled": {
+    "type": "boolean",
+    "value": true
+  },
   "pipe_name": {
     "type": "string",
     "value": "VOLUMIO"
@@ -9,7 +13,7 @@
   },
   "bit_depth": {
     "type": "string",
-    "value": "16"
+    "value": " 16" 
   },
   "channels": {
     "type": "string",
@@ -18,6 +22,18 @@
   "codec": {
     "type": "string",
     "value": "2"
+  },
+  "client_enabled": {
+    "type": "boolean",
+    "value": true
+  },
+  "volumio_host": {
+    "type": "string",
+    "value": "localhost"
+  },
+  "custom_host": {
+    "type": "boolean",
+    "value": false
   },
   "host": {
     "type": "string",

@@ -15,6 +15,7 @@
 		"saveButton": {
 			"label": "TRANSLATE.SNAPCAST.SAVE",
 			"data": [
+				"server_enabled",
 				"pipe_name",
 				"sample_rate",
 				"bit_depth",
@@ -23,53 +24,85 @@
 				]
 		},
 		"content": [{
+			  "id":"server_enabled",
+			  "element": "switch",
+			  "doc": "TRANSLATE.SNAPCAST.D_SERVER_ENABLED",
+			  "label": "TRANSLATE.SNAPCAST.SERVER_ENABLED",
+			  "value": true
+		},
+		{
 			"id": "pipe_name",
 			"element": "input",
 			"type": "text",
-			"doc": "Snapcast stream name, as shown in clients.",
+			"doc": "TRANSLATE.SNAPCAST.D_PIPE_NAME",
 			"label": "TRANSLATE.SNAPCAST.PIPE_NAME",
-			"value": "VOLUMIO"
+			"value": "VOLUMIO",
+			"visibleIf": 
+					{
+						"field": "server_enabled",
+						"value": true
+					}
 		},
 		{
 			"id": "sample_rate",
 			"element": "select",
-			"doc": "The number of samples per second.",
+			"doc": "TRANSLATE.SNAPCAST.D_SAMPLE_RATE",
 			"label": "TRANSLATE.SNAPCAST.SAMPLE_RATE",
 			"value": {
 				"value": 48000,
 				"label": "48000kHz"
 			},
-			"options": []
+			"options": [],
+			"visibleIf": 
+					{
+						"field": "server_enabled",
+						"value": true
+					}
 		},
 		{
 			"id": "bit_depth",
 			"element": "select",
-			"doc": "The number of bits of information in each sample.",
+			"doc": "TRANSLATE.SNAPCAST.D_BIT_DEPTH",
 			"label": "TRANSLATE.SNAPCAST.BIT_DEPTH",
 			"value": {
 				"value": 16,
 				"label": "16 bits"
 			},
-			"options": []
+			"options": [],
+			"visibleIf": 
+					{
+						"field": "server_enabled",
+						"value": true
+					}
 		},
 		{
 			"id": "channels",
 			"type": "text",
 			"element": "input",
-			"doc": "The amount of channels to output (2 = stereo).",
+			"doc": "TRANSLATE.SNAPCAST.D_CHANNELS",
 			"label": "TRANSLATE.SNAPCAST.CHANNELS",
-			"value": "2"
+			"value": "2",
+			"visibleIf": 
+					{
+						"field": "server_enabled",
+						"value": true
+					}
 		},
 		{
 			"id": "codec",
 			"element": "select",
-			"doc": "The codec used for the stream.",
+			"doc": "TRANSLATE.SNAPCAST.D_CODEC",
 			"label": "TRANSLATE.SNAPCAST.CODEC",
 			"value": {
 				"value": "flac",
 				"label": "Flac (lossless compressed [default])"
 			},
-			"options": []
+			"options": [],
+			"visibleIf": 
+					{
+						"field": "server_enabled",
+						"value": true
+					}
 		}]
 	},
 	{
@@ -85,28 +118,71 @@
 		"saveButton": {
 			"label": "TRANSLATE.SNAPCAST.SAVE",
 			"data": [
+				"client_enabled",
+				"volumio_host",
+				"custom_host",
 				"host",
 				"soundcard"
 				]
 		},
 		"content": [{
+			  "id":"client_enabled",
+			  "element": "switch",
+			  "doc": "TRANSLATE.SNAPCAST.D_CLIENT_ENABLED",
+			  "label": "TRANSLATE.SNAPCAST.CLIENT_ENABLED",
+			  "value": true
+		},
+		{
+			"id": "volumio_host",
+			"element": "select",
+			"doc": "TRANSLATE.SNAPCAST.D_VOLUMIOHOST",
+			"label": "TRANSLATE.SNAPCAST.VOLUMIOHOST",
+			"value": {
+				"value": "localhost",
+				"label": "Local host [default]"
+			},
+			"options": [],
+			"visibleIf": 
+					{
+						"field": "client_enabled",
+						"value": true
+					}
+		},
+		{
+			  "id":"custom_host",
+			  "element": "switch",
+			  "doc": "TRANSLATE.SNAPCAST.D_CUSTOMHOST",
+			  "label": "TRANSLATE.SNAPCAST.CUSTOMHOST",
+			  "value": false
+		},
+		{
 			"id": "host",
 			"element": "input",
 			"type": "text",
-			"doc": "Snapcast server name or IP.",
+			"doc": "TRANSLATE.SNAPCAST.D_HOSTNAME",
 			"label": "TRANSLATE.SNAPCAST.HOSTNAME",
-			"value": "localhost"
+			"value": "127.0.0.1",
+			"visibleIf": 
+					{
+						"field": "custom_host",
+						"value": true						
+					}
 		},
 		{
 			"id": "soundcard",
 			"element": "select",
-			"doc": "The soundcard you wish to use for the SnapCast client output. This can be the name or index.",
+			"doc": "TRANSLATE.SNAPCAST.D_SOUNDCARD",
 			"label": "TRANSLATE.SNAPCAST.SOUNDCARD",
 			"value": {
-				"value": 0,
-				"label": "[0] Default rPi soundcard"
+				"value": "ALSA",
+				"label": "Audio Jack"
 			},
-			"options": []
+			"options": [],
+			"visibleIf": 
+					{
+						"field": "client_enabled",
+						"value": true
+					}
 		}]
 	},
 	{
@@ -118,7 +194,7 @@
 			"id": "alsa_output_device",
 			"type": "text",
 			"element": "input",
-			"doc": "ALSA output device.",
+			"doc": "TRANSLATE.SNAPCAST.D_OUTPUT_DEVICE",
 			"label": "TRANSLATE.SNAPCAST.OUTPUT_DEVICE",
 			"value": "2"
 		},
@@ -126,16 +202,9 @@
 			"id": "alsa_mixer",
 			"type": "text",
 			"element": "input",
-			"doc": "ALSA mixer.",
+			"doc": "TRANSLATE.SNAPCAST.D_MIXER",
 			"label": "TRANSLATE.SNAPCAST.MIXER",
 			"value": "1"
-		},
-		{
-			"id": "software_mixer_index",
-			"element": "text",
-			"doc": "ALSA software mixer index.",
-			"label": "TRANSLATE.SNAPCAST.SOFTWARE_MIXER_INDEX",
-			"value": "2"
 		}]
 	}]
 }
