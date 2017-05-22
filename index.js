@@ -384,11 +384,11 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function (data)
 	
 	var streamName = (data['pipe_name'] == undefined ? 'SNAPSERVER' : data['pipe_name']);
 	var snapMode = (data['mode'] == undefined ? '\\&mode=read' : '\\&mode=' + data['mode']);
-	var snapFormat = (format == undefined ? '' : '\\&format=' + format);
+	var snapFormat = (format == undefined ? '' : '\\&sampleformat=' + format);
 	var snapCodec = (data['codec'].value == undefined ? '' : '\\&codec=' + data['codec'].value);
 	
 	// Omit default
-	if(snapFormat == "\\&format=48000:16:2")
+	if(snapFormat == "\\&sampleformat=48000:16:2")
 		snapFormat = '';
 	if(snapCodec == "\\&codec=flac")
 		snapCodec = '';
