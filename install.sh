@@ -96,6 +96,7 @@ if [ ! -f $INSTALLING ]; then
 	# Disable standard output to ALSA
 	sed -i -- 's|.*type.*alsa.*|&\n        enabled         "no"|g' /etc/mpd.conf
 	
+	service mpd restart
 	/etc/init.d/snapserver restart
 	/etc/init.d/snapclient restart	
 	

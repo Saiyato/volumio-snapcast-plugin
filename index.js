@@ -294,7 +294,7 @@ ControllerSnapCast.prototype.restartService = function (serviceName, boot)
 	var self = this;
 	var defer=libQ.defer();
 
-	if((serviceName == 'snapserver' && self.config.get('server_enabled') == true) || (serviceName == 'snapclient' && self.config.get('client_enabled') == true))
+	if((serviceName == 'snapserver' && self.config.get('server_enabled') == true) || (serviceName == 'snapclient' && self.config.get('client_enabled') == true) || serviceName == 'mpd')
 	{
 		var command = "/usr/bin/sudo /bin/systemctl restart " + serviceName;
 		
@@ -427,6 +427,9 @@ ControllerSnapCast.prototype.updateMPDConfig = function (data)
 		.then(function (executeGeneratedScript) {
 			self.executeShellScript(__dirname + '/mpd_switch_to_fifo.sh');
 		})
+		.then(function (restartMPD) {
+			self.restartService('mpd', false);
+		})
 		.fail(function(e)
 		{
 			self.commandrouter.pushtoastmessage('error', "script failed", "could not execute script with error: " + error);
@@ -527,7 +530,7 @@ ControllerSnapCast.prototype.executeShellScript = function (shellScript)
 	var self = this;
 	var defer = libQ.defer();
 
-	var command = "/bin/echo volumio | /bin/sh " + shellScript;
+	var command = "/bin/echo volumio | /usr/bin/sudo /bin/sh " + shellScript;
 	self.logger.info("CMD: " + command);
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
