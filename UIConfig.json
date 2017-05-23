@@ -231,8 +231,8 @@
 		{
 			"id": "mpd_bit_depth",
 			"element": "select",
-			"doc": "TRANSLATE.SNAPCAST.D_BIT_DEPTH",
-			"label": "TRANSLATE.SNAPCAST.BIT_DEPTH",
+			"doc": "TRANSLATE.SNAPCAST.D_MPD_BIT_DEPTH",
+			"label": "TRANSLATE.SNAPCAST.MPD_BIT_DEPTH",
 			"value": {
 				"value": 16,
 				"label": "16 bits"
@@ -248,8 +248,8 @@
 			"id": "mpd_channels",
 			"type": "text",
 			"element": "input",
-			"doc": "TRANSLATE.SNAPCAST.D_CHANNELS",
-			"label": "TRANSLATE.SNAPCAST.CHANNELS",
+			"doc": "TRANSLATE.SNAPCAST.D_MPD_CHANNELS",
+			"label": "TRANSLATE.SNAPCAST.MPD_CHANNELS",
 			"value": "2",
 			"visibleIf": 
 					{
