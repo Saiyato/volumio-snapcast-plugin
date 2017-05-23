@@ -186,6 +186,91 @@
 		}]
 	},
 	{
+		"id": "section_mpdconf",
+		"element": "section",
+		"label": "TRANSLATE.SNAPCAST.MPD",
+		"icon": "fa-play",
+		"onSave": {
+			"type": "controller",
+			"endpoint": "miscellanea/SnapCast",
+			"method": "updateMPDConfig"
+		},
+		"saveButton": {
+			"label": "TRANSLATE.SNAPCAST.PATCHMPD",
+			"data": [
+				"patch_mpd",
+				"mpd_sample_rate",
+				"mpd_bit_depth",
+				"mpd_channels",
+				"enable_alsa_mpd"
+				]
+		},
+		"content": [{
+			  "id":"patch_mpd",
+			  "element": "switch",
+			  "doc": "TRANSLATE.SNAPCAST.D_PATCH_MPD",
+			  "label": "TRANSLATE.SNAPCAST.PATCH_MPD",
+			  "value": true
+		},
+		{
+			"id": "mpd_sample_rate",
+			"element": "select",
+			"doc": "TRANSLATE.SNAPCAST.D_MPD_SAMPLE_RATE",
+			"label": "TRANSLATE.SNAPCAST.MPD_SAMPLE_RATE",
+			"value": {
+				"value": 48000,
+				"label": "48000kHz"
+			},
+			"options": [],
+			"visibleIf": 
+					{
+						"field": "patch_mpd",
+						"value": true
+					}
+		},
+		{
+			"id": "mpd_bit_depth",
+			"element": "select",
+			"doc": "TRANSLATE.SNAPCAST.D_BIT_DEPTH",
+			"label": "TRANSLATE.SNAPCAST.BIT_DEPTH",
+			"value": {
+				"value": 16,
+				"label": "16 bits"
+			},
+			"options": [],
+			"visibleIf": 
+					{
+						"field": "patch_mpd",
+						"value": true
+					}
+		},
+		{
+			"id": "mpd_channels",
+			"type": "text",
+			"element": "input",
+			"doc": "TRANSLATE.SNAPCAST.D_CHANNELS",
+			"label": "TRANSLATE.SNAPCAST.CHANNELS",
+			"value": "2",
+			"visibleIf": 
+					{
+						"field": "patch_mpd",
+						"value": true
+					}
+		},
+		{
+			  "id":"enable_alsa_mpd",
+			  "element": "switch",
+			  "doc": "TRANSLATE.SNAPCAST.D_ENABLE_ALSA_MPD",
+			  "label": "TRANSLATE.SNAPCAST.ENABLE_ALSA_MPD",
+			  "value": false,
+			  "visibleIf": 
+					{
+						"field": "patch_mpd",
+						"value": true
+					}
+		}]
+	},
+	{
 		"id": "section_loadedconf",
 		"element": "section",
 		"label": "TRANSLATE.SNAPCAST.LOADED",

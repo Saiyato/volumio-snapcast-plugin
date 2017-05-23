@@ -129,6 +129,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
     __dirname + '/UIConfig.json')
     .then(function(uiconf)
     {
+		// Server settings
 		uiconf.sections[1].content[0].value = self.config.get('server_enabled');
 		uiconf.sections[0].content[1].value = self.config.get('pipe_name');
 		for (var n = 0; n < ratesdata.sample_rates.length; n++){
@@ -172,6 +173,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 			}
 		}
 		
+		// Client settings
 		uiconf.sections[1].content[0].value = self.config.get('client_enabled');
 		for (var n = 0; n < volumioInstances.list.length; n++){			
 			if(volumioInstances.list[n].isSelf == true)
@@ -210,9 +212,42 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 				uiconf.sections[1].content[4].value.label = soundcards[n].name;
 			}
 		}
-				
-		uiconf.sections[2].content[0].value = soundcards[parseInt(self.commandRouter.sharedVars.get('alsa.outputdevice'))].name;
-		uiconf.sections[2].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
+		
+		// MPD settings
+		uiconf.sections[2].content[0].value = self.config.get('patch_mpd');
+		
+		for (var n = 0; n < ratesdata.sample_rates.length; n++){
+			self.configManager.pushUIConfigParam(uiconf, 'sections[2].content[1].options', {
+				value: ratesdata.sample_rates[n].rate,
+				label: ratesdata.sample_rates[n].name
+			});
+			
+			if(ratesdata.sample_rates[n].rate == parseInt(self.config.get('mpd_sample_rate')))
+			{
+				uiconf.sections[2].content[1].value.value = ratesdata.sample_rates[n].rate;
+				uiconf.sections[2].content[1].value.label = ratesdata.sample_rates[n].name;
+			}
+		}
+		
+		for (var n = 0; n < bitdephtdata.bit_depths.length; n++){
+			self.configManager.pushUIConfigParam(uiconf, 'sections[2].content[2].options', {
+				value: bitdephtdata.bit_depths[n].bits,
+				label: bitdephtdata.bit_depths[n].name
+			});
+			
+			if(bitdephtdata.bit_depths[n].bits == parseInt(self.config.get('mpd_bit_depth')))
+			{
+				uiconf.sections[2].content[2].value.value = bitdephtdata.bit_depths[n].bits;
+				uiconf.sections[2].content[2].value.label = bitdephtdata.bit_depths[n].name;
+			}
+		}
+		
+		uiconf.sections[2].content[3].value = self.config.get('mpd_channels');		
+		uiconf.sections[2].content[4].value = self.config.get('enable_alsa_mpd');
+		
+		// Volumio info
+		uiconf.sections[3].content[0].value = soundcards[(self.commandRouter.sharedVars.get('alsa.outputdevice'))].name;
+		uiconf.sections[3].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
 		self.logger.info("Populated config screen.");
 		
         defer.resolve(uiconf);
@@ -375,6 +410,35 @@ ControllerSnapCast.prototype.updateSnapClient = function (data)
 	return defer.promise;
 }
 
+ControllerSnapCast.prototype.updateMPDConfig = function (data)
+{
+	var self = this;
+	var defer = libQ.defer();
+	
+	self.config.set('patch_mpd', data['patch_mpd']);
+	self.config.set('mpd_sample_rate', data['mpd_sample_rate'].value);
+	self.config.set('mpd_bit_depth', data['mpd_bit_depth'].value);
+	self.config.set('mpd_channels', data['mpd_channels']);
+	self.config.set('enable_alsa_mpd', data['enable_alsa_mpd']);
+	
+	if(data['patch_mpd'] == true && data['enable_alsa_mpd'] == false)
+	{
+		self.generateMPDUpdateScript()
+		.then(function (executeGeneratedScript) {
+			self.executeShellScript(__dirname + '/mpd_switch_to_fifo.sh');
+		})
+		.fail(function(e)
+		{
+			self.commandrouter.pushtoastmessage('error', "script failed", "could not execute script with error: " + error);
+			defer.reject(new error());
+		})
+	}
+		
+	self.logger.info("Successfully patched mpd.conf");
+	
+	return defer.promise;
+}
+
 ControllerSnapCast.prototype.updateSnapServerConfig = function (data)
 {
 	var self = this;
@@ -423,6 +487,81 @@ ControllerSnapCast.prototype.updateSnapClientConfig = function (data)
 		if(error)
 			console.log(stderr);
 		
+		defer.resolve();
+	});
+	
+	return defer.promise;
+}
+
+ControllerSnapCast.prototype.generateMPDUpdateScript = function()
+{
+	var self = this;
+	var defer = libQ.defer();
+	
+	fs.readFile(__dirname + "/mpd_switch_to_fifo.tmpl", 'utf8', function (err, data) {
+            if (err) {
+                defer.reject(new Error(err));
+                //return console.log(err);
+            }
+
+			var conf1 = data.replace("${SAMPLE_RATE}", self.config.get('mpd_sample_rate'));
+			var conf2 = conf1.replace("${BIT_DEPTH}", self.config.get('mpd_bit_depth'));
+			var conf3 = conf2.replace("${CHANNELS}", self.config.get('channels'));
+			
+			fs.writeFile(__dirname + "/mpd_switch_to_fifo.sh", conf3, 'utf8', function (err) {
+                if (err)
+				{
+					self.commandRouter.pushConsoleMessage('Could not write the script with error: ' + err);
+                    defer.reject(new Error(err));
+				}
+                else 
+					defer.resolve();
+            });
+        });
+		
+		return defer.promise;
+}
+
+ControllerSnapCast.prototype.executeShellScript = function (shellScript)
+{
+	var self = this;
+	var defer = libQ.defer();
+
+	var command = "/bin/echo volumio | /bin/sh " + shellScript;
+	self.logger.info("CMD: " + command);
+	
+	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
+		if(error)
+		{
+			console.log(stderr);
+			self.commandRouter.pushConsoleMessage('Could not execute script {' + shellScript + '} with error: ' + error);
+		}
+
+		self.commandRouter.pushConsoleMessage('Successfully executed script {' + shellScript + '}');
+		self.commandRouter.pushToastMessage('success', "Script executed", "Successfully executed script: " + shellScript);
+		defer.resolve();
+	});
+	
+	return defer.promise;
+}
+
+ControllerSnapCast.prototype.replaceStringInFile = function (pattern, value, inFile)
+{
+	var self = this;
+	var defer = libQ.defer();
+	var castValue;
+	
+	if(value == true || value == false)
+			castValue = ~~value;
+	else
+		castValue = value;
+
+	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|" + pattern + ".*|" + castValue + "|g' " + inFile;
+
+	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
+		if(error)
+			console.log(stderr);
+
 		defer.resolve();
 	});
 	
