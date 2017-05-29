@@ -214,7 +214,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 		}
 		
 		// MPD settings
-		uiconf.sections[2].content[0].value = self.config.get('patch_mpd');
+		uiconf.sections[2].content[0].value = self.config.get('patch_mpd_conf');
 		
 		for (var n = 0; n < ratesdata.sample_rates.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[2].content[1].options', {
@@ -244,6 +244,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 		
 		uiconf.sections[2].content[3].value = self.config.get('mpd_channels');		
 		uiconf.sections[2].content[4].value = self.config.get('enable_alsa_mpd');
+		uiconf.sections[2].content[5].value = self.config.get('enable_fifo_mpd');
 		
 		// Volumio info
 		uiconf.sections[3].content[0].value = soundcards[(self.commandRouter.sharedVars.get('alsa.outputdevice'))].name;
@@ -415,17 +416,18 @@ ControllerSnapCast.prototype.updateMPDConfig = function (data)
 	var self = this;
 	var defer = libQ.defer();
 	
-	self.config.set('patch_mpd', data['patch_mpd']);
+	self.config.set('patch_mpd_conf', data['patch_mpd_conf']);
 	self.config.set('mpd_sample_rate', data['mpd_sample_rate'].value);
 	self.config.set('mpd_bit_depth', data['mpd_bit_depth'].value);
 	self.config.set('mpd_channels', data['mpd_channels']);
 	self.config.set('enable_alsa_mpd', data['enable_alsa_mpd']);
+	self.config.set('enable_fifo_mpd', data['enable_fifo_mpd']);
 	
-	if(data['patch_mpd'] == true && data['enable_alsa_mpd'] == false)
+	if(data['patch_mpd_conf'] == true)
 	{
 		self.generateMPDUpdateScript()
 		.then(function (executeGeneratedScript) {
-			self.executeShellScript(__dirname + '/mpd_switch_to_fifo.sh');
+		 self.executeShellScript(__dirname + '/mpd_switch_to_fifo.sh');
 		})
 		.then(function (restartMPD) {
 			self.restartService('mpd', false);
@@ -436,6 +438,8 @@ ControllerSnapCast.prototype.updateMPDConfig = function (data)
 			defer.reject(new error());
 		})
 	}
+	else
+		self.commandrouter.pushtoastmessage('success', "Not updating", "Not patching mpd.conf");
 		
 	self.logger.info("Successfully patched mpd.conf");
 	
@@ -506,12 +510,17 @@ ControllerSnapCast.prototype.generateMPDUpdateScript = function()
                 defer.reject(new Error(err));
                 //return console.log(err);
             }
+			
+			var alsa = (self.config.get('enable_alsa_mpd') == true ? "yes" : "no");
+			var fifo = (self.config.get('enable_fifo_mpd') == true ? "yes" : "no");
 
 			var conf1 = data.replace("${SAMPLE_RATE}", self.config.get('mpd_sample_rate'));
 			var conf2 = conf1.replace("${BIT_DEPTH}", self.config.get('mpd_bit_depth'));
-			var conf3 = conf2.replace("${CHANNELS}", self.config.get('channels'));
+			var conf3 = conf2.replace("${CHANNELS}", self.config.get('mpd_channels'));
+			var conf4 = conf3.replace(/ENABLE_ALSA/g, alsa);
+			var conf5 = conf4.replace(/ENABLE_FIFO/g, fifo);
 			
-			fs.writeFile(__dirname + "/mpd_switch_to_fifo.sh", conf3, 'utf8', function (err) {
+			fs.writeFile(__dirname + "/mpd_switch_to_fifo.sh", conf5, 'utf8', function (err) {
                 if (err)
 				{
 					self.commandRouter.pushConsoleMessage('Could not write the script with error: ' + err);
@@ -530,7 +539,7 @@ ControllerSnapCast.prototype.executeShellScript = function (shellScript)
 	var self = this;
 	var defer = libQ.defer();
 
-	var command = "/bin/echo volumio | /usr/bin/sudo /bin/sh " + shellScript;
+	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sh " + shellScript;
 	self.logger.info("CMD: " + command);
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {

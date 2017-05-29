@@ -43,7 +43,7 @@
     "type": "string",
     "value": "1"
   },
-  "patch_mpd": {
+  "patch_mpd_conf": {
     "type": "boolean",
     "value": true
   },
@@ -62,5 +62,9 @@
   "enable_alsa_mpd": {
     "type": "boolean",
     "value": false
+  },
+  "enable_fifo_mpd": {
+    "type": "boolean",
+    "value": true
   }
 }

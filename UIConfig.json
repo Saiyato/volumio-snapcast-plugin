@@ -198,18 +198,19 @@
 		"saveButton": {
 			"label": "TRANSLATE.SNAPCAST.PATCHMPD",
 			"data": [
-				"patch_mpd",
+				"patch_mpd_conf",
 				"mpd_sample_rate",
 				"mpd_bit_depth",
 				"mpd_channels",
-				"enable_alsa_mpd"
+				"enable_alsa_mpd",
+				"enable_fifo_mpd"
 				]
 		},
 		"content": [{
-			  "id":"patch_mpd",
+			  "id":"patch_mpd_conf",
 			  "element": "switch",
-			  "doc": "TRANSLATE.SNAPCAST.D_PATCH_MPD",
-			  "label": "TRANSLATE.SNAPCAST.PATCH_MPD",
+			  "doc": "TRANSLATE.SNAPCAST.D_PATCH_MPD_CONF",
+			  "label": "TRANSLATE.SNAPCAST.PATCH_MPD_CONF",
 			  "value": true
 		},
 		{
@@ -263,6 +264,18 @@
 			  "doc": "TRANSLATE.SNAPCAST.D_ENABLE_ALSA_MPD",
 			  "label": "TRANSLATE.SNAPCAST.ENABLE_ALSA_MPD",
 			  "value": false,
+			  "visibleIf": 
+					{
+						"field": "patch_mpd",
+						"value": true
+					}
+		},
+		{
+			  "id":"enable_fifo_mpd",
+			  "element": "switch",
+			  "doc": "TRANSLATE.SNAPCAST.D_ENABLE_FIFO_MPD",
+			  "label": "TRANSLATE.SNAPCAST.ENABLE_FIFO_MPD",
+			  "value": true,
 			  "visibleIf": 
 					{
 						"field": "patch_mpd",
