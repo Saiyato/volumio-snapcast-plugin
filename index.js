@@ -249,6 +249,8 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 		// Volumio info
 		uiconf.sections[3].content[0].value = soundcards[(self.commandRouter.sharedVars.get('alsa.outputdevice'))].name;
 		uiconf.sections[3].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
+		// self.logger.info("ALSA.OutputDevice: " + self.commandRouter.sharedVars.get('alsa.outputdevice') + " ALSA.OutputDeviceMixer: " + self.commandRouter.sharedVars.get('alsa.outputdevicemixer'));
+		
 		self.logger.info("Populated config screen.");
 		
         defer.resolve(uiconf);
