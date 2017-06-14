@@ -78,7 +78,7 @@ if [ ! -f $INSTALLING ]; then
 	" | sudo tee /etc/asound.conf
 	fi
 
-	Fix chrooted spotify-connect-web
+	# Fix chrooted spotify-connect-web
 	if ! grep -q "asound.conf" /data/plugins/music_service/volspotconnect/spotify-connect-web/etc;
 	then
 		rm /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
