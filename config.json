@@ -41,7 +41,7 @@
   },
   "soundcard": {
     "type": "string",
-    "value": "1"
+    "value": "ALSA"
   },
   "patch_mpd_conf": {
     "type": "boolean",

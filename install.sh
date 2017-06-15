@@ -89,7 +89,7 @@ if [ ! -f $INSTALLING ]; then
 	alsactl restore
 	
 	sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=SNAPPISERVER\&mode=read"|g' /etc/default/snapserver
-	sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS="-d -h 127.0.0.1 -s BossDAC"|g' /etc/default/snapclient
+	sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS="-d -h 127.0.0.1 -s ALSA"|g' /etc/default/snapclient
 	sed -i -- 's|.*enabled.*|    enabled         "yes"|g' /etc/mpd.conf
 	sed -i -- 's|.*format.*|    format          "48000:16:2"|g' /etc/mpd.conf
 	
