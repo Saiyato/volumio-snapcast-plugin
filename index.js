@@ -44,11 +44,13 @@ ControllerSnapCast.prototype.getConfigurationFiles = function()
 // Plugin methods -----------------------------------------------------------------------------
 ControllerSnapCast.prototype.onStop = function() {
 	var self = this;
-	var defer=libQ.defer();
+	var defer = libQ.defer();
 
 	self.stopService('snapserver')
 	.then(function(stopClient){
 		self.stopService('snapclient');
+		
+		defer.resolve();
 	})
 	.fail(function(e)
 	{
@@ -60,11 +62,13 @@ ControllerSnapCast.prototype.onStop = function() {
 
 ControllerSnapCast.prototype.stop = function() {
 	var self = this;
-	var defer=libQ.defer();
+	var defer = libQ.defer();
 
 	self.stopService('snapserver')
 	.then(function(stopClient){
 		self.stopService('snapclient');
+		
+		defer.resolve();
 	})
 	.fail(function(e)
 	{
@@ -76,14 +80,17 @@ ControllerSnapCast.prototype.stop = function() {
 
 ControllerSnapCast.prototype.onStart = function() {
 	var self = this;
-	var defer=libQ.defer();
+	var defer = libQ.defer();
 
 	self.restartService('snapserver', true)
 	.then(function(startClient){
 		self.restartService('snapclient', true);
+		
+		defer.resolve();
 	})
 	.fail(function(e)
 	{
+		self.commandRouter.pushToastMessage('error', "Startup failed", "Could not start the SnapCast plugin in a fashionable manner.");
 		defer.reject(new error());
 	});
 
@@ -93,19 +100,21 @@ ControllerSnapCast.prototype.onStart = function() {
 ControllerSnapCast.prototype.onRestart = function() 
 {
 	// Do nothing
-	self.logger.info("performing onRestart action");	
+	self.logger.info("performing onRestart action");
 	
 	var self = this;
 };
 
 ControllerSnapCast.prototype.onInstall = function() 
 {
+	self.logger.info("performing onInstall action");
+	
 	var self = this;
 };
 
 ControllerSnapCast.prototype.onUninstall = function() 
 {
-	// Uninstall.sh?
+	// Perform uninstall tasks here!
 };
 
 ControllerSnapCast.prototype.getUIConfig = function() {
@@ -186,14 +195,14 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 			else
 			{
 				self.configManager.pushUIConfigParam(uiconf, 'sections[1].content[1].options', {
-					value: volumioInstances.list[n].name,
+					value: volumioInstances.list[n].host.replace('http://', ''),
 					label: volumioInstances.list[n].name
 				});
 			}
 			
-			if(volumioInstances.list[n].name == self.config.get('volumio_host'))
+			if(volumioInstances.list[n].host.replace('http://', '') == self.config.get('volumio_host'))
 			{
-				uiconf.sections[1].content[1].value.value = volumioInstances.list[n].name;
+				uiconf.sections[1].content[1].value.value = volumioInstances.list[n].host.replace('http://', '');
 				uiconf.sections[1].content[1].value.label = volumioInstances.list[n].name;
 			}
 		}
