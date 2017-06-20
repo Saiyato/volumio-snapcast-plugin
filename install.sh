@@ -65,14 +65,13 @@ if [ ! -f $INSTALLING ]; then
 			pcm writeFile # Direct to the plugin which will write to a file
 			format S16_LE
 			rate 48000
-			channels 2
 		}
 	}
 
 	pcm.writeFile {
 		type file
 		slave.pcm null
-		file \"/tmp/snapfifo\"
+		file \"/tmp/spotififo\"
 		format \"raw\"
 	}
 	" | sudo tee /etc/asound.conf
@@ -84,17 +83,25 @@ if [ ! -f $INSTALLING ]; then
 		rm /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
 		ln -sf /etc/asound.conf /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
 	fi
+	
+	mkfifo /tmp/spotififo
 
 	# Reload ALSA with the new config
 	alsactl restore
 	
-	sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=SNAPPISERVER\&mode=read"|g' /etc/default/snapserver
+	sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=Volumio-MPD\&mode=read -s pipe:///tmp/spotififo?name=Volumio-Spotify\&mode=read"|g' /etc/default/snapserver
 	sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS="-d -h 127.0.0.1 -s ALSA"|g' /etc/default/snapclient
 	sed -i -- 's|.*enabled.*|    enabled         "yes"|g' /etc/mpd.conf
 	sed -i -- 's|.*format.*|    format          "48000:16:2"|g' /etc/mpd.conf
 	
 	# Disable standard output to ALSA
-	sed -i -- 's|.*type.*alsa.*|&\n        enabled         "no"|g' /etc/mpd.conf
+	ALSA_ENABLED=$(sed -n "/.*type.*\"alsa\"/{n;p}" /etc/mpd.conf)
+
+	case $ALSA_ENABLED in
+	 *enabled*) sed -i -- '/.*type.*alsa.*/!b;n;c\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ enabled\ \ \ \ \ \ \ \ \ "no"' /etc/mpd.conf ;;
+	 *) sed -i -- 's|.*type.*alsa.*|&\n\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ enabled\ \ \ \ \ \ \ \ \ "no"|g' /etc/mpd.conf ;;
+	esac
+
 	
 	service mpd restart
 	/etc/init.d/snapserver restart
