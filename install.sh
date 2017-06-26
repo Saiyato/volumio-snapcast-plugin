@@ -84,6 +84,7 @@ if [ ! -f $INSTALLING ]; then
 		ln -sf /etc/asound.conf /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
 	fi
 	
+	echo "Creating spotififo pipe"
 	mkfifo /tmp/spotififo
 
 	# Reload ALSA with the new config
