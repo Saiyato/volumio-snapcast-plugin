@@ -8,3 +8,6 @@ Simple how-to:
 4. Enjoy in-sync music
 
 The package will install both the client and server, you can en- or disable any component in the plugin settings.
+
+Please note that I did not write the SnapCast application, I merely supplied means to easily install it.
+You can find the SnapCast project here: https://github.com/badaix/snapcast
