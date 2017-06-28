@@ -139,7 +139,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
     .then(function(uiconf)
     {
 		// Server settings
-		uiconf.sections[1].content[0].value = self.config.get('server_enabled');
+		uiconf.sections[0].content[0].value = self.config.get('server_enabled');
 		uiconf.sections[0].content[1].value = self.config.get('pipe_name');
 		for (var n = 0; n < ratesdata.sample_rates.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[2].options', {
