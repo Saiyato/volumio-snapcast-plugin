@@ -140,7 +140,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
     {
 		// Server settings
 		uiconf.sections[0].content[0].value = self.config.get('server_enabled');
-		uiconf.sections[0].content[1].value = self.config.get('pipe_name');
+		uiconf.sections[0].content[1].value = self.config.get('mpd_pipe_name');
 		for (var n = 0; n < ratesdata.sample_rates.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[2].options', {
 				value: ratesdata.sample_rates[n].rate,
@@ -371,7 +371,7 @@ ControllerSnapCast.prototype.updateSnapServer = function (data)
 	var defer = libQ.defer();
 	
 	self.config.set('server_enabled', data['server_enabled']);
-	self.config.set('pipe_name', data['pipe_name']);
+	self.config.set('mpd_pipe_name', data['mpd_pipe_name']);
 	self.config.set('sample_rate', data['sample_rate'].value);
 	self.config.set('bit_depth', data['bit_depth'].value);
 	self.config.set('channels', data['channels']);
@@ -464,7 +464,7 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function (data)
 	
 	var format = data['sample_rate'].value + ':' + data['bit_depth'].value + ':' + data['channels'];
 	
-	var streamName = (data['pipe_name'] == undefined ? 'SNAPSERVER' : data['pipe_name']);
+	var streamName = (data['mpd_pipe_name'] == undefined ? 'SNAPSERVER' : data['mpd_pipe_name']);
 	var snapMode = (data['mode'] == undefined ? '\\&mode=read' : '\\&mode=' + data['mode']);
 	var snapFormat = (format == undefined ? '' : '\\&sampleformat=' + format);
 	var snapCodec = (data['codec'].value == undefined ? '' : '\\&codec=' + data['codec'].value);
@@ -474,9 +474,12 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function (data)
 		snapFormat = '';
 	if(snapCodec == "\\&codec=flac")
 		snapCodec = '';
+
+	var mpdPipe = "-s pipe:///tmp/snapfifo?name=" + streamName + snapMode + snapFormat + snapCodec;
+	var spotifyPipe = "-s pipe:///tmp/spotififo?name=Volumio-Spotify" + snapMode;
 	
 	// sudo sed 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=AUDIOPHONICS\&mode=read&sampleformat=48000:16:2&codec=flac"|g' /etc/default/snapserver
-	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d -s pipe:///tmp/snapfifo?name=" + streamName + snapMode + snapFormat + snapCodec + "\"|g' /etc/default/snapserver";
+	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d " + mpdPipe + "\"|g' /etc/default/snapserver";
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)

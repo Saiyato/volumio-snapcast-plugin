@@ -3,7 +3,7 @@
     "type": "boolean",
     "value": true
   },
-  "pipe_name": {
+  "mpd_pipe_name": {
     "type": "string",
     "value": "VOLUMIO"
   },  

@@ -16,7 +16,7 @@
 			"label": "TRANSLATE.SNAPCAST.SAVE",
 			"data": [
 				"server_enabled",
-				"pipe_name",
+				"mpd_pipe_name",
 				"sample_rate",
 				"bit_depth",
 				"channels",
@@ -31,7 +31,7 @@
 			  "value": true
 		},
 		{
-			"id": "pipe_name",
+			"id": "mpd_pipe_name",
 			"element": "input",
 			"type": "text",
 			"doc": "TRANSLATE.SNAPCAST.D_PIPE_NAME",
