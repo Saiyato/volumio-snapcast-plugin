@@ -5,7 +5,11 @@
   },
   "mpd_pipe_name": {
     "type": "string",
-    "value": "VOLUMIO"
+    "value": "VOLUMIO-MPD"
+  },  
+  "spotify_pipe_name": {
+    "type": "string",
+    "value": "VOLUMIO-SPOTIFY"
   },  
   "sample_rate": {
     "type": "string",

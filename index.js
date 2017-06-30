@@ -141,44 +141,45 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 		// Server settings
 		uiconf.sections[0].content[0].value = self.config.get('server_enabled');
 		uiconf.sections[0].content[1].value = self.config.get('mpd_pipe_name');
+		uiconf.sections[0].content[2].value = self.config.get('spotify_pipe_name');
 		for (var n = 0; n < ratesdata.sample_rates.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[2].options', {
+			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[3].options', {
 				value: ratesdata.sample_rates[n].rate,
 				label: ratesdata.sample_rates[n].name
 			});
 			
 			if(ratesdata.sample_rates[n].rate == parseInt(self.config.get('sample_rate')))
 			{
-				uiconf.sections[0].content[2].value.value = ratesdata.sample_rates[n].rate;
-				uiconf.sections[0].content[2].value.label = ratesdata.sample_rates[n].name;
+				uiconf.sections[0].content[3].value.value = ratesdata.sample_rates[n].rate;
+				uiconf.sections[0].content[3].value.label = ratesdata.sample_rates[n].name;
 			}
 		}
 		
 		for (var n = 0; n < bitdephtdata.bit_depths.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[3].options', {
+			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[4].options', {
 				value: bitdephtdata.bit_depths[n].bits,
 				label: bitdephtdata.bit_depths[n].name
 			});
 			
 			if(bitdephtdata.bit_depths[n].bits == parseInt(self.config.get('bit_depth')))
 			{
-				uiconf.sections[0].content[3].value.value = bitdephtdata.bit_depths[n].bits;
-				uiconf.sections[0].content[3].value.label = bitdephtdata.bit_depths[n].name;
+				uiconf.sections[0].content[4].value.value = bitdephtdata.bit_depths[n].bits;
+				uiconf.sections[0].content[4].value.label = bitdephtdata.bit_depths[n].name;
 			}
 		}
 		
-		uiconf.sections[0].content[4].value = self.config.get('channels');
+		uiconf.sections[0].content[5].value = self.config.get('channels');
 		
 		for (var n = 0; n < codecdata.codecs.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[5].options', {
+			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[6].options', {
 				value: codecdata.codecs[n].extension,
 				label: codecdata.codecs[n].name
 			});
 			
 			if(codecdata.codecs[n].extension == self.config.get('codec'))
 			{
-				uiconf.sections[0].content[5].value.value = codecdata.codecs[n].extension;
-				uiconf.sections[0].content[5].value.label = codecdata.codecs[n].name;
+				uiconf.sections[0].content[6].value.value = codecdata.codecs[n].extension;
+				uiconf.sections[0].content[6].value.label = codecdata.codecs[n].name;
 			}
 		}
 		
@@ -372,6 +373,7 @@ ControllerSnapCast.prototype.updateSnapServer = function (data)
 	
 	self.config.set('server_enabled', data['server_enabled']);
 	self.config.set('mpd_pipe_name', data['mpd_pipe_name']);
+	self.config.set('spotify_pipe_name', data['spotify_pipe_name']);
 	self.config.set('sample_rate', data['sample_rate'].value);
 	self.config.set('bit_depth', data['bit_depth'].value);
 	self.config.set('channels', data['channels']);
@@ -464,7 +466,8 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function (data)
 	
 	var format = data['sample_rate'].value + ':' + data['bit_depth'].value + ':' + data['channels'];
 	
-	var streamName = (data['mpd_pipe_name'] == undefined ? 'SNAPSERVER' : data['mpd_pipe_name']);
+	var mpdStreamName = (data['mpd_pipe_name'] == undefined ? 'VOLUMIO-MPD' : data['mpd_pipe_name']);
+	var spotifyStreamName = (data['spotify_pipe_name'] == undefined ? 'VOLUMIO-SPOTIFY' : data['spotify_pipe_name']);
 	var snapMode = (data['mode'] == undefined ? '\\&mode=read' : '\\&mode=' + data['mode']);
 	var snapFormat = (format == undefined ? '' : '\\&sampleformat=' + format);
 	var snapCodec = (data['codec'].value == undefined ? '' : '\\&codec=' + data['codec'].value);
@@ -475,11 +478,11 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function (data)
 	if(snapCodec == "\\&codec=flac")
 		snapCodec = '';
 
-	var mpdPipe = "-s pipe:///tmp/snapfifo?name=" + streamName + snapMode + snapFormat + snapCodec;
-	var spotifyPipe = "-s pipe:///tmp/spotififo?name=Volumio-Spotify" + snapMode;
+	var mpdPipe = "-s pipe:///tmp/snapfifo?name=" + mpdStreamName + snapMode + snapFormat + snapCodec;
+	var spotifyPipe = " -s pipe:///tmp/spotififo?name=" + spotifyStreamName + snapMode;
 	
 	// sudo sed 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=AUDIOPHONICS\&mode=read&sampleformat=48000:16:2&codec=flac"|g' /etc/default/snapserver
-	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d " + mpdPipe + "\"|g' /etc/default/snapserver";
+	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d " + mpdPipe + spotifyPipe + "\"|g' /etc/default/snapserver";
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)

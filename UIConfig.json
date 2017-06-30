@@ -17,6 +17,7 @@
 			"data": [
 				"server_enabled",
 				"mpd_pipe_name",
+				"spotify_pipe_name",
 				"sample_rate",
 				"bit_depth",
 				"channels",
@@ -34,9 +35,22 @@
 			"id": "mpd_pipe_name",
 			"element": "input",
 			"type": "text",
-			"doc": "TRANSLATE.SNAPCAST.D_PIPE_NAME",
-			"label": "TRANSLATE.SNAPCAST.PIPE_NAME",
-			"value": "VOLUMIO",
+			"doc": "TRANSLATE.SNAPCAST.D_MPD_PIPE_NAME",
+			"label": "TRANSLATE.SNAPCAST.MPD_PIPE_NAME",
+			"value": "VOLUMIO-MPD",
+			"visibleIf": 
+					{
+						"field": "server_enabled",
+						"value": true
+					}
+		},
+		{
+			"id": "spotify_pipe_name",
+			"element": "input",
+			"type": "text",
+			"doc": "TRANSLATE.SNAPCAST.D_SPOTIFY_PIPE_NAME",
+			"label": "TRANSLATE.SNAPCAST.SPOTIFY_PIPE_NAME",
+			"value": "VOLUMIO-SPOTIFY",
 			"visibleIf": 
 					{
 						"field": "server_enabled",
