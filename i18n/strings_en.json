@@ -6,7 +6,7 @@
 		"D_SERVER_ENABLED":"En- or disable the SnapServer",
 		"MPD_PIPE_NAME":"Name of the MPD stream",
 		"D_MPD_PIPE_NAME":"Snapcast stream name for MPD, as shown in clients.",
-		"SPOTIFY_PIPE_NAME":"Name of Spotify the stream",
+		"SPOTIFY_PIPE_NAME":"Name of the Spotify stream",
 		"D_SPOTIFY_PIPE_NAME":"Snapcast stream name for Spotify, as shown in clients.",
 		"SAMPLE_RATE":"Sample rate",
 		"D_SAMPLE_RATE":"The number of samples per second.",

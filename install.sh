@@ -85,7 +85,10 @@ if [ ! -f $INSTALLING ]; then
 	fi
 	
 	echo "Creating spotififo pipe"
-	mkfifo /tmp/spotififo
+	if [ ! -f "/tmp/spotififo" ];
+	then
+		mkfifo /tmp/spotififo
+	fi
 
 	# Reload ALSA with the new config
 	alsactl restore
