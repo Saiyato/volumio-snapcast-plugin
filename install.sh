@@ -4,7 +4,7 @@ INSTALLING="/home/volumio/snapcast-plugin.installing"
 
 if [ ! -f $INSTALLING ]; then
 
-	touch $INSTALLING	
+	touch $INSTALLING
 
 	# Download latest SnapCast packages
 	mkdir /home/volumio/snapcast
@@ -15,9 +15,9 @@ if [ ! -f $INSTALLING ]; then
 	mv /usr/sbin/snapserver /usr/sbin/snapserver.bak
 
 	# Install packages (server and client) and dependencies
-	for f in /home/volumio/snapcast/snap*.deb; do dpkg -i $f; done
+	for f in /home/volumio/snapcast/snap*.deb; do dpkg -i "$f"; done
 	apt-get -f install
-	
+
 	# To execute the --version command
 	ln -fs /usr/bin/snapclient /usr/sbin/snapclient
 	ln -fs /usr/bin/snapserver /usr/sbin/snapserver
@@ -50,7 +50,7 @@ if [ ! -f $INSTALLING ]; then
 		file \"/tmp/snapfifo\"
 		format \"raw\"
 	}
-	" >> /etc/asound.conf 
+	" >> /etc/asound.conf
 		fi
 	else
 		echo "
@@ -77,27 +77,24 @@ if [ ! -f $INSTALLING ]; then
 	" | sudo tee /etc/asound.conf
 	fi
 
-	# Fix chrooted spotify-connect-web
-	if ! grep -q "asound.conf" /data/plugins/music_service/volspotconnect/spotify-connect-web/etc;
-	then
-		rm /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
-		ln -sf /etc/asound.conf /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
-	fi
-	
-	echo "Creating spotififo pipe"
-	if [ ! -f "/tmp/spotififo" ];
-	then
-		mkfifo /tmp/spotififo
+  # don't touch this if spotify-connect-web plugin  is not installed
+	if [ ! -d "/data/plugins/music_service/volspotconnect/spotify-connect-web" ] ; then
+		# Fix chrooted spotify-connect-web
+		if ! grep -q "asound.conf" /data/plugins/music_service/volspotconnect/spotify-connect-web/etc;
+		then
+			rm /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
+			ln -sf /etc/asound.conf /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
+		fi
 	fi
 
 	# Reload ALSA with the new config
 	alsactl restore
-	
+
 	sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=Volumio-MPD\&mode=read -s pipe:///tmp/spotififo?name=Volumio-Spotify\&mode=read"|g' /etc/default/snapserver
 	sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS="-d -h 127.0.0.1 -s ALSA"|g' /etc/default/snapclient
 	sed -i -- 's|.*enabled.*|    enabled         "yes"|g' /etc/mpd.conf
 	sed -i -- 's|.*format.*|    format          "48000:16:2"|g' /etc/mpd.conf
-	
+
 	# Disable standard output to ALSA
 	ALSA_ENABLED=$(sed -n "/.*type.*\"alsa\"/{n;p}" /etc/mpd.conf)
 
@@ -106,13 +103,16 @@ if [ ! -f $INSTALLING ]; then
 	 *) sed -i -- 's|.*type.*alsa.*|&\n\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ enabled\ \ \ \ \ \ \ \ \ "no"|g' /etc/mpd.conf ;;
 	esac
 
-	
-	service mpd restart
-	/etc/init.d/snapserver restart
-	/etc/init.d/snapclient restart	
-	
+	systemctl enable /data/plugins/miscellanea/SnapCast/spotififo.service
+	systemctl start spotififo.service
+
+  systemctl restart mpd
+  systemctl restart snapserver
+  systemctl restart snapclient
+
+
 	rm $INSTALLING
-	
+
 	#required to end the plugin install
 	echo "plugininstallend"
 else

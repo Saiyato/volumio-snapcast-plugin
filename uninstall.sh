@@ -4,11 +4,15 @@ INSTALLING="/home/volumio/snapcast-plugin.uninstalling"
 
 if [ ! -f $INSTALLING ]; then
 
-	touch $INSTALLING	
-	
+	touch $INSTALLING
+
+	# Stop Spotify fifo pipe service
+	systemctl stop spotififo.service
+	systemctl disable spotififo.service
+
 	dpkg -P snapserver
 	dpkg -P snapclient
-	
+
 	ALSA_ENABLED=$(sed -n "/.*type.*\"alsa\"/{n;p}" /etc/mpd.conf)
 	FIFO_ENABLED=$(sed -n "/.*type.*\"fifo\"/{n;p}" /etc/mpd.conf)
 
@@ -21,14 +25,15 @@ if [ ! -f $INSTALLING ]; then
 	 *enabled*) sed -i -- '/.*type.*fifo.*/!b;n;c\ \ \ \ enabled\ \ \ \ \ \ \ \ \ "no"' /etc/mpd.conf ;;
 	 *) sed -i -- 's|.*type.*fifo.*|&\n\ \ \ \ enabled\ \ \ \ \ \ \ \ \ "no"|g' /etc/mpd.conf ;;
 	esac
-	
-	# Remove Spotify fifo pipe
+
+	# Clean-up
+	rm -rf /lib/systemd/system/spotififo.service
 	rm /tmp/spotififo
-	
+
 	rm $INSTALLING
-	
+
 	#required to end the plugin uninstall
 	echo "pluginuninstallend"
 else
 	echo "Plugin is already uninstalling! Not continuing..."
-fi	
+fi
