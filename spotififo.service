@@ -5,7 +5,6 @@ Before=snapserver.service
 [Service]
 User=volumio
 ExecStart=/bin/sh -c "rm -f /tmp/spotififo && mkfifo /tmp/spotififo && chmod 664 /tmp/spotififo && chgrp audio /tmp/spotififo"
-ExecStop= /bin/sh -c "rm -f /tmp/spotififo"
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=spotfifo
