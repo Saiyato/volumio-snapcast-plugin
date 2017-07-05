@@ -26,6 +26,10 @@ if [ ! -f $INSTALLING ]; then
 	 *) sed -i -- 's|.*type.*fifo.*|&\n\ \ \ \ enabled\ \ \ \ \ \ \ \ \ "no"|g' /etc/mpd.conf ;;
 	esac
 
+	# Clean-up
+	rm -rf /lib/systemd/system/spotififo.service
+	rm /tmp/spotififo
+
 	rm $INSTALLING
 
 	#required to end the plugin uninstall
