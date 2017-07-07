@@ -86,42 +86,57 @@ format "raw"
 
 # Remove snapcast config
 sed '/^pcm.!snapcast/,$d' test.txt
+sed '/#SNAPCAST/,/#ENDOFSNAPCAST/d' test.txt
 
-Restart ALSA 
-alsactl restore
+#DELETE SNAPCAST asound
+sed '/#SNAPCAST/,/#ENDOFSNAPCAST/ {/#SNAPCAST/n;/#ENDOFSNAPCAST/!d}' test.txt
 
-OPTIONS:
-soundcard -> index
-host (server) -> localhost / remote host
+sed '/^pcm.!snapcast=/{h;s/=.*/=newvalue/};${x;/^$/{s//FOOBAR=newvalue/;H};x}' infile
 
-## plugin
-var smixer = self.commandRouter.sharedVars.get('alsa.outputdevicemixer')
-		/*		if (smixer != "None") {
-					mixer = "--mixer " + "'"+ smixer +"'";
-				} else { mixer = ""
-				}
-				*/
-				if (smixer == "None") {
-					mixer = ""
-				}else if (smixer =="undefined") {
-					mixer = ""
-				}else if (smixer =="") {
-					mixer = ""
-				}else { mixer = "--mixer " + "'"+ smixer +"'";
-				}
-			var smindex = self.commandRouter.sharedVars.get('alsa.outputdevice');
-				if (smixer == "SoftMaster") {
-					var smindex = self.getAdditionalConf('audio_interface', 'alsa_controller', 'softvolumenumber');
-					mindex = "--mixer_device_index " + smindex ;	
-				}else if (smixer == "None") {	
-					mindex = ""
-				}else if (smixer == "undefined") {	
-					mindex = ""
-				}else if (smixer == "") {
-					mindex = ""
-				}else { mindex = "--mixer_device_index " + smindex;
-				}
+VOLSPOTCONNECT2
+# implementation through SnapCast
+SNAPSERVER_OPTS="-d -s spotify:///data/plugins/music_service/volspotconnect2/librespot?name=Volumio-Spotify&devicename=Volumio-Spotify&mode=read"
 
-sudo /etc/init.d/snapserver restart
-sudo /etc/init.d/snapclient restart
-sudo /etc/init.d/mpd restart
+###### IMPL.
+
+VOLSPOTCONNECT
+./spotify-connect-web  --username 'rachidgroeneveld@hotmail.nl' --password 'jJD2B6bGqy83' --bitrate 320 --name 'Volumiotest' --dbrange 45 -o snapcast  &
+
+VOLSPOTCONNECT2
+SNAPSERVER_OPTS="-d -s pipe:///tmp/spotififo?name=Volumio-Spotify&mode=read"
+./librespot -b 320  -c /tmp ${shared} --name '${devicename}' --backend pipe --device /tmp/spotififo
+
+
+##### CHANGING STREAMS
+https://github.com/Mashape/unirest-nodejs
+
+var unirest = require('unirest'); -> Qobuz plugin
+var Request = unirest.get('http://mockbin.com/request');
+
+// Example
+unirest.post('http://mockbin.com/request')
+.type('json')
+.send({
+  foo: 'bar',
+  hello: 3
+})
+.end(function (response) {
+  console.log(response.body);
+})
+
+// qobuz example
+        unirest
+            .get(uri)
+            .proxy(proxy)
+            .headers(headers)
+            .query(params)
+            .end(function (response) {
+                if (response.ok) {
+                    logger.qobuzDebug('makeQobuzRequest response: ' + JSON.stringify(response.body));
+                    defer.resolve(response.body);
+                }
+                else {
+                    logger.info('[' + Date.now() + '] ' + 'makeQobuzRequest failed response: ' + JSON.stringify(response.body));
+                    defer.reject(new Error());
+                }
+            });

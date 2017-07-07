@@ -10,9 +10,11 @@ if [ ! -f $INSTALLING ]; then
 	systemctl stop spotififo.service
 	systemctl disable spotififo.service
 
+	# Uninstall packages
 	dpkg -P snapserver
 	dpkg -P snapclient
 
+	# Restore /etc/mpd.conf
 	ALSA_ENABLED=$(sed -n "/.*type.*\"alsa\"/{n;p}" /etc/mpd.conf)
 	FIFO_ENABLED=$(sed -n "/.*type.*\"fifo\"/{n;p}" /etc/mpd.conf)
 
@@ -25,6 +27,9 @@ if [ ! -f $INSTALLING ]; then
 	 *enabled*) sed -i -- '/.*type.*fifo.*/!b;n;c\ \ \ \ enabled\ \ \ \ \ \ \ \ \ "no"' /etc/mpd.conf ;;
 	 *) sed -i -- 's|.*type.*fifo.*|&\n\ \ \ \ enabled\ \ \ \ \ \ \ \ \ "no"|g' /etc/mpd.conf ;;
 	esac
+	
+	# Restore /etc/asound.conf
+	sed -i '/#SNAPCAST/,/#ENDOFSNAPCAST/d' /etc/asound.conf
 
 	# Clean-up
 	rm -rf /lib/systemd/system/spotififo.service

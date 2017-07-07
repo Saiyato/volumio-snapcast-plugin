@@ -25,35 +25,13 @@ if [ ! -f $INSTALLING ]; then
 	if [ -f "/etc/asound.conf" ];
 	then
 		# Add or update asound.conf
-		if ! grep -q "snapcast" /etc/asound.conf;
+		if grep -q "snapcast" /etc/asound.conf;
 		then
-			# Append to file
-			echo "
-	pcm.!snapcast {
-		type plug
-		slave.pcm snapConverter
-	}
-
-	pcm.snapConverter {
-		type rate
-		slave {
-			pcm writeFile # Direct to the plugin which will write to a file
-			format S16_LE
-			rate 48000
-			channels 2
-		}
-	}
-
-	pcm.writeFile {
-		type file
-		slave.pcm null
-		file \"/tmp/snapfifo\"
-		format \"raw\"
-	}
-	" >> /etc/asound.conf
+			sed -i '/#SNAPCAST/,/#ENDOFSNAPCAST/d' /etc/asound.conf
 		fi
-	else
-		echo "
+		# Append to /etc/asound.conf
+			echo "
+	#SNAPCAST
 	pcm.!snapcast {
 		type plug
 		slave.pcm snapConverter
@@ -74,24 +52,53 @@ if [ ! -f $INSTALLING ]; then
 		file \"/tmp/spotififo\"
 		format \"raw\"
 	}
+	#ENDOFSNAPCAST
+	" >> /etc/asound.conf
+	else
+		# Write /etc/asound.conf		
+		echo "
+	#SNAPCAST
+	pcm.!snapcast {
+		type plug
+		slave.pcm snapConverter
+	}
+
+	pcm.snapConverter {
+		type rate
+		slave {
+			pcm writeFile # Direct to the plugin which will write to a file
+			format S16_LE
+			rate 48000
+		}
+	}
+
+	pcm.writeFile {
+		type file
+		slave.pcm null
+		file \"/tmp/spotififo\"
+		format \"raw\"
+	}
+	#ENDOFSNAPCAST
 	" | sudo tee /etc/asound.conf
 	fi
-
-  # don't touch this if spotify-connect-web plugin  is not installed
-	if [ ! -d "/data/plugins/music_service/volspotconnect/spotify-connect-web" ] ; then
+	
+	# Don't touch this if volspotconnect (spotify-connect-web) plugin  is not installed
+	if [ -d "/data/plugins/music_service/volspotconnect/spotify-connect-web/etc" ];
+	then
 		# Fix chrooted spotify-connect-web
-		if ! grep -q "asound.conf" /data/plugins/music_service/volspotconnect/spotify-connect-web/etc;
+		if ! grep -q "asound.conf" /data/plugins/music_service/volspotconnect/spotify-connect-web/etc ;
 		then
-			rm /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
+			if [ -f "/data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf"];
+			then
+				rm /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
+			fi
 			ln -sf /etc/asound.conf /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
 		fi
 	fi
 
 	# Reload ALSA with the new config
-	alsactl restore
+	alsactl restore	
 
-	sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=Volumio-MPD\&mode=read -s pipe:///tmp/spotififo?name=Volumio-Spotify\&mode=read"|g' /etc/default/snapserver
-	sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS="-d -h 127.0.0.1 -s ALSA"|g' /etc/default/snapclient
 	sed -i -- 's|.*enabled.*|    enabled         "yes"|g' /etc/mpd.conf
 	sed -i -- 's|.*format.*|    format          "48000:16:2"|g' /etc/mpd.conf
 
@@ -106,11 +113,13 @@ if [ ! -f $INSTALLING ]; then
 	systemctl enable /data/plugins/miscellanea/SnapCast/spotififo.service
 	systemctl start spotififo.service
 
-  systemctl restart mpd
-  systemctl restart snapserver
-  systemctl restart snapclient
+	systemctl restart mpd
+	systemctl restart snapserver
+	systemctl restart snapclient
 
-
+	sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=Volumio-MPD\&mode=read -s pipe:///tmp/spotififo?name=Volumio-Spotify\&mode=read"|g' /etc/default/snapserver
+	sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS="-d -h 127.0.0.1 -s ALSA"|g' /etc/default/snapclient
+	
 	rm $INSTALLING
 
 	#required to end the plugin install
