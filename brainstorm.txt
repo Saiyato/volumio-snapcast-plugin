@@ -100,7 +100,7 @@ SNAPSERVER_OPTS="-d -s spotify:///data/plugins/music_service/volspotconnect2/lib
 ###### IMPL.
 
 VOLSPOTCONNECT
-./spotify-connect-web  --username 'rachidgroeneveld@hotmail.nl' --password 'jJD2B6bGqy83' --bitrate 320 --name 'Volumiotest' --dbrange 45 -o snapcast  &
+./spotify-connect-web  --username '{USER}' --password '{PASS}' --bitrate 320 --name 'Volumiotest' --dbrange 45 -o snapcast  &
 
 VOLSPOTCONNECT2
 SNAPSERVER_OPTS="-d -s pipe:///tmp/spotififo?name=Volumio-Spotify&mode=read"
