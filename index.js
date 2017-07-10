@@ -456,21 +456,18 @@ ControllerSnapCast.prototype.updateSnapServerSpotify = function (data)
 	
 	self.logger.info("Successfully updated snapserver spotify configuration");
 	
-	// self.updateSnapServerConfig(data)
-	// .then(function (restartService) {
-		// if(data['server_enabled'] == true)
-			// self.restartService("snapserver", false);
-		// else
-			// self.stopService("snapserver");
-	// })
-	// .fail(function(e)
-	// {
-		// defer.reject(new error());
-	// })
+	self.updateSnapServerConfig()
+	.then(function (restartService) {
+		if(self.config.get('server_enabled') == true)
+			self.restartService("snapserver", false);
+		else
+			self.stopService("snapserver");
+	})
+	.fail(function(e)
+	{
+		defer.reject(new error());
+	})
 	
-	// return defer.promise;
-	
-	return defer.resolve();
 	return defer.promise;
 }
 
@@ -564,6 +561,7 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 	var spotifyPipe = " -s pipe:///tmp/spotififo?name=" + spotifyStreamName + snapMode;
 	if(self.config.get('spotify_integration') == "librespot")
 	{
+		spotifyPipe = " -s spotify://" + self.config.get('librespot_location') + "?name=" + spotifyStreamName + spotifyDevicename + spotifyBitrate;
 	}
 	
 	// sudo sed 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=AUDIOPHONICS\&mode=read&sampleformat=48000:16:2&codec=flac"|g' /etc/default/snapserver
