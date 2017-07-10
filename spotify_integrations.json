@@ -1,0 +1,5 @@
+{"integrations":[
+  {"name":"Volspotconnect 1 (spotify-web-connect)","type":"volspotconnect1"},
+  {"name":"Volspotconnect 2 (librespot)","type":"volspotconnect2"},
+  {"name":"Librespot (standalone)","type":"librespot"}
+]}

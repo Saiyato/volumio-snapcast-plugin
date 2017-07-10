@@ -14,22 +14,19 @@
 		},
 		"saveButton": {
 			"label": "TRANSLATE.SNAPCAST.SAVE",
-			"data": [
-				"server_enabled",
-				"mpd_pipe_name",
-				"spotify_pipe_name",
-				"sample_rate",
-				"bit_depth",
-				"channels",
-				"codec"
-				]
+			"data": ["server_enabled",
+			"mpd_pipe_name",
+			"sample_rate",
+			"bit_depth",
+			"channels",
+			"codec"]
 		},
 		"content": [{
-			  "id":"server_enabled",
-			  "element": "switch",
-			  "doc": "TRANSLATE.SNAPCAST.D_SERVER_ENABLED",
-			  "label": "TRANSLATE.SNAPCAST.SERVER_ENABLED",
-			  "value": true
+			"id": "server_enabled",
+			"element": "switch",
+			"doc": "TRANSLATE.SNAPCAST.D_SERVER_ENABLED",
+			"label": "TRANSLATE.SNAPCAST.SERVER_ENABLED",
+			"value": true
 		},
 		{
 			"id": "mpd_pipe_name",
@@ -38,24 +35,10 @@
 			"doc": "TRANSLATE.SNAPCAST.D_MPD_PIPE_NAME",
 			"label": "TRANSLATE.SNAPCAST.MPD_PIPE_NAME",
 			"value": "VOLUMIO-MPD",
-			"visibleIf": 
-					{
-						"field": "server_enabled",
-						"value": true
-					}
-		},
-		{
-			"id": "spotify_pipe_name",
-			"element": "input",
-			"type": "text",
-			"doc": "TRANSLATE.SNAPCAST.D_SPOTIFY_PIPE_NAME",
-			"label": "TRANSLATE.SNAPCAST.SPOTIFY_PIPE_NAME",
-			"value": "VOLUMIO-SPOTIFY",
-			"visibleIf": 
-					{
-						"field": "server_enabled",
-						"value": true
-					}
+			"visibleIf": {
+				"field": "server_enabled",
+				"value": true
+			}
 		},
 		{
 			"id": "sample_rate",
@@ -67,11 +50,10 @@
 				"label": "48000kHz"
 			},
 			"options": [],
-			"visibleIf": 
-					{
-						"field": "server_enabled",
-						"value": true
-					}
+			"visibleIf": {
+				"field": "server_enabled",
+				"value": true
+			}
 		},
 		{
 			"id": "bit_depth",
@@ -83,11 +65,10 @@
 				"label": "16 bits"
 			},
 			"options": [],
-			"visibleIf": 
-					{
-						"field": "server_enabled",
-						"value": true
-					}
+			"visibleIf": {
+				"field": "server_enabled",
+				"value": true
+			}
 		},
 		{
 			"id": "channels",
@@ -96,11 +77,10 @@
 			"doc": "TRANSLATE.SNAPCAST.D_CHANNELS",
 			"label": "TRANSLATE.SNAPCAST.CHANNELS",
 			"value": "2",
-			"visibleIf": 
-					{
-						"field": "server_enabled",
-						"value": true
-					}
+			"visibleIf": {
+				"field": "server_enabled",
+				"value": true
+			}
 		},
 		{
 			"id": "codec",
@@ -112,11 +92,10 @@
 				"label": "Flac (lossless compressed [default])"
 			},
 			"options": [],
-			"visibleIf": 
-					{
-						"field": "server_enabled",
-						"value": true
-					}
+			"visibleIf": {
+				"field": "server_enabled",
+				"value": true
+			}
 		}]
 	},
 	{
@@ -131,20 +110,18 @@
 		},
 		"saveButton": {
 			"label": "TRANSLATE.SNAPCAST.SAVE",
-			"data": [
-				"client_enabled",
-				"volumio_host",
-				"custom_host",
-				"host",
-				"soundcard"
-				]
+			"data": ["client_enabled",
+			"volumio_host",
+			"custom_host",
+			"host",
+			"soundcard"]
 		},
 		"content": [{
-			  "id":"client_enabled",
-			  "element": "switch",
-			  "doc": "TRANSLATE.SNAPCAST.D_CLIENT_ENABLED",
-			  "label": "TRANSLATE.SNAPCAST.CLIENT_ENABLED",
-			  "value": true
+			"id": "client_enabled",
+			"element": "switch",
+			"doc": "TRANSLATE.SNAPCAST.D_CLIENT_ENABLED",
+			"label": "TRANSLATE.SNAPCAST.CLIENT_ENABLED",
+			"value": true
 		},
 		{
 			"id": "volumio_host",
@@ -156,18 +133,17 @@
 				"label": "Local host [default]"
 			},
 			"options": [],
-			"visibleIf": 
-					{
-						"field": "client_enabled",
-						"value": true
-					}
+			"visibleIf": {
+				"field": "client_enabled",
+				"value": true
+			}
 		},
 		{
-			  "id":"custom_host",
-			  "element": "switch",
-			  "doc": "TRANSLATE.SNAPCAST.D_CUSTOMHOST",
-			  "label": "TRANSLATE.SNAPCAST.CUSTOMHOST",
-			  "value": false
+			"id": "custom_host",
+			"element": "switch",
+			"doc": "TRANSLATE.SNAPCAST.D_CUSTOMHOST",
+			"label": "TRANSLATE.SNAPCAST.CUSTOMHOST",
+			"value": false
 		},
 		{
 			"id": "host",
@@ -176,11 +152,10 @@
 			"doc": "TRANSLATE.SNAPCAST.D_HOSTNAME",
 			"label": "TRANSLATE.SNAPCAST.HOSTNAME",
 			"value": "127.0.0.1",
-			"visibleIf": 
-					{
-						"field": "custom_host",
-						"value": true						
-					}
+			"visibleIf": {
+				"field": "custom_host",
+				"value": true
+			}
 		},
 		{
 			"id": "soundcard",
@@ -192,11 +167,10 @@
 				"label": "Audio Jack"
 			},
 			"options": [],
-			"visibleIf": 
-					{
-						"field": "client_enabled",
-						"value": true
-					}
+			"visibleIf": {
+				"field": "client_enabled",
+				"value": true
+			}
 		}]
 	},
 	{
@@ -211,21 +185,19 @@
 		},
 		"saveButton": {
 			"label": "TRANSLATE.SNAPCAST.PATCHMPD",
-			"data": [
-				"patch_mpd_conf",
-				"mpd_sample_rate",
-				"mpd_bit_depth",
-				"mpd_channels",
-				"enable_alsa_mpd",
-				"enable_fifo_mpd"
-				]
+			"data": ["patch_mpd_conf",
+			"mpd_sample_rate",
+			"mpd_bit_depth",
+			"mpd_channels",
+			"enable_alsa_mpd",
+			"enable_fifo_mpd"]
 		},
 		"content": [{
-			  "id":"patch_mpd_conf",
-			  "element": "switch",
-			  "doc": "TRANSLATE.SNAPCAST.D_PATCH_MPD_CONF",
-			  "label": "TRANSLATE.SNAPCAST.PATCH_MPD_CONF",
-			  "value": true
+			"id": "patch_mpd_conf",
+			"element": "switch",
+			"doc": "TRANSLATE.SNAPCAST.D_PATCH_MPD_CONF",
+			"label": "TRANSLATE.SNAPCAST.PATCH_MPD_CONF",
+			"value": true
 		},
 		{
 			"id": "mpd_sample_rate",
@@ -237,11 +209,10 @@
 				"label": "48000kHz"
 			},
 			"options": [],
-			"visibleIf": 
-					{
-						"field": "patch_mpd",
-						"value": true
-					}
+			"visibleIf": {
+				"field": "patch_mpd",
+				"value": true
+			}
 		},
 		{
 			"id": "mpd_bit_depth",
@@ -253,11 +224,10 @@
 				"label": "16 bits"
 			},
 			"options": [],
-			"visibleIf": 
-					{
-						"field": "patch_mpd",
-						"value": true
-					}
+			"visibleIf": {
+				"field": "patch_mpd",
+				"value": true
+			}
 		},
 		{
 			"id": "mpd_channels",
@@ -266,35 +236,139 @@
 			"doc": "TRANSLATE.SNAPCAST.D_MPD_CHANNELS",
 			"label": "TRANSLATE.SNAPCAST.MPD_CHANNELS",
 			"value": "2",
-			"visibleIf": 
-					{
-						"field": "patch_mpd",
-						"value": true
-					}
+			"visibleIf": {
+				"field": "patch_mpd",
+				"value": true
+			}
 		},
 		{
-			  "id":"enable_alsa_mpd",
-			  "element": "switch",
-			  "doc": "TRANSLATE.SNAPCAST.D_ENABLE_ALSA_MPD",
-			  "label": "TRANSLATE.SNAPCAST.ENABLE_ALSA_MPD",
-			  "value": false,
-			  "visibleIf": 
-					{
-						"field": "patch_mpd",
-						"value": true
-					}
+			"id": "enable_alsa_mpd",
+			"element": "switch",
+			"doc": "TRANSLATE.SNAPCAST.D_ENABLE_ALSA_MPD",
+			"label": "TRANSLATE.SNAPCAST.ENABLE_ALSA_MPD",
+			"value": false,
+			"visibleIf": {
+				"field": "patch_mpd",
+				"value": true
+			}
 		},
 		{
-			  "id":"enable_fifo_mpd",
-			  "element": "switch",
-			  "doc": "TRANSLATE.SNAPCAST.D_ENABLE_FIFO_MPD",
-			  "label": "TRANSLATE.SNAPCAST.ENABLE_FIFO_MPD",
-			  "value": true,
-			  "visibleIf": 
-					{
-						"field": "patch_mpd",
-						"value": true
-					}
+			"id": "enable_fifo_mpd",
+			"element": "switch",
+			"doc": "TRANSLATE.SNAPCAST.D_ENABLE_FIFO_MPD",
+			"label": "TRANSLATE.SNAPCAST.ENABLE_FIFO_MPD",
+			"value": true,
+			"visibleIf": {
+				"field": "patch_mpd",
+				"value": true
+			}
+		}]
+	},
+	{
+		"id": "section_spotifyconf",
+		"element": "section",
+		"label": "TRANSLATE.SNAPCAST.SPOTIFY",
+		"icon": "fa-server",
+		"onSave": {
+			"type": "controller",
+			"endpoint": "miscellanea/SnapCast",
+			"method": "updateSnapServerSpotify"
+		},
+		"saveButton": {
+			"label": "TRANSLATE.SNAPCAST.SAVE",
+			"data": ["spotify_pipe_name",
+			"spotify_integration",
+			"expose_additional_spotify_settings",
+			"librespot_location",
+			"spotify_username",
+			"spotify_password",
+			"spotify_devicename",
+			"spotify_bitrate"]
+		},
+		"content": [{
+			"id": "spotify_pipe_name",
+			"element": "input",
+			"type": "text",
+			"doc": "TRANSLATE.SNAPCAST.D_SPOTIFY_PIPE_NAME",
+			"label": "TRANSLATE.SNAPCAST.SPOTIFY_PIPE_NAME",
+			"value": "VOLUMIO-SPOTIFY"
+		},
+		{
+			"id": "spotify_integration",
+			"element": "select",
+			"doc": "TRANSLATE.SNAPCAST.D_SPOTIFY_INTEGRATION",
+			"label": "TRANSLATE.SNAPCAST.SPOTIFY_INTEGRATION",
+			"value": {
+				"value": "volspotconnect1",
+				"label": "Volspotconnect (spotify-web-connect)"
+			},
+			"options": []
+		},
+		{
+			"id": "expose_additional_spotify_settings",
+			"element": "switch",
+			"doc": "TRANSLATE.SNAPCAST.D_EXPOSE_ADDITIONAL_SPOTIFY_SETTINGS",
+			"label": "TRANSLATE.SNAPCAST.EXPOSE_ADDITIONAL_SPOTIFY_SETTINGS",
+			"value": false
+		},
+		{
+			"id": "librespot_location",
+			"element": "input",
+			"type": "text",
+			"doc": "TRANSLATE.SNAPCAST.D_LIBRESPOT_LOCATION",
+			"label": "TRANSLATE.SNAPCAST.LIBRESPOT_LOCATION",
+			"value": "",
+			"visibleIf": {
+				"field": "expose_additional_spotify_settings",
+				"value": true
+			}
+		},
+		{
+			"id": "spotify_username",
+			"element": "input",
+			"type": "text",
+			"doc": "TRANSLATE.SNAPCAST.D_SPOTIFY_USERNAME",
+			"label": "TRANSLATE.SNAPCAST.SPOTIFY_USERNAME",
+			"value": "",
+			"visibleIf": {
+				"field": "expose_additional_spotify_settings",
+				"value": true
+			}
+		},
+		{
+			"id": "spotify_password",
+			"type": "password",
+			"element": "input",
+			"doc": "TRANSLATE.SNAPCAST.D_SPOTIFY_PASSWORD",
+			"label": "TRANSLATE.SNAPCAST.SPOTIFY_PASSWORD",
+			"value": "2",
+			"visibleIf": {
+				"field": "expose_additional_spotify_settings",
+				"value": true
+			}
+		},
+		{
+			"id": "spotify_devicename",
+			"type": "input",
+			"element": "input",
+			"doc": "TRANSLATE.SNAPCAST.D_SPOTIFY_DEVICENAME",
+			"label": "TRANSLATE.SNAPCAST.SPOTIFY_DEVICENAME",
+			"value": "SNAPCAST",
+			"visibleIf": {
+				"field": "expose_additional_spotify_settings",
+				"value": true
+			}
+		},
+		{
+			"id": "spotify_bitrate",
+			"element": "select",
+			"doc": "TRANSLATE.SNAPCAST.D_SPOTIFY_BITRATE",
+			"label": "TRANSLATE.SNAPCAST.SPOTIFY_BITRATE",
+			"value": {
+				"value": 160,
+				"label": "160 kbps (normal quality)"
+			},
+			"options": []
 		}]
 	},
 	{

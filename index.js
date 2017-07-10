@@ -128,6 +128,9 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 	var ratesdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/sample_rates.json'),  'utf8', {throws: false});
 	var bitdephtdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/bit_depths.json'),  'utf8', {throws: false});
 	var codecdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/codecs.json'),  'utf8', {throws: false});
+	var kbpsdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/kbps_spotify.json'),  'utf8', {throws: false});
+	var spotify = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/spotify_integrations.json'),  'utf8', {throws: false});
+	
 	var volumioInstances = self.getVolumioInstances();
 	//self.logger.info("INSTANCES: " + JSON.stringify(volumioInstances));
 	var soundcards = self.getAlsaCards();
@@ -138,50 +141,52 @@ ControllerSnapCast.prototype.getUIConfig = function() {
     __dirname + '/UIConfig.json')
     .then(function(uiconf)
     {
+		self.logger.info("## populating UI...");
+		
 		// Server settings
 		uiconf.sections[0].content[0].value = self.config.get('server_enabled');
-		uiconf.sections[0].content[1].value = self.config.get('mpd_pipe_name');
-		uiconf.sections[0].content[2].value = self.config.get('spotify_pipe_name');
+		uiconf.sections[0].content[1].value = self.config.get('mpd_pipe_name');		
 		for (var n = 0; n < ratesdata.sample_rates.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[3].options', {
+			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[2].options', {
 				value: ratesdata.sample_rates[n].rate,
 				label: ratesdata.sample_rates[n].name
 			});
 			
 			if(ratesdata.sample_rates[n].rate == parseInt(self.config.get('sample_rate')))
 			{
-				uiconf.sections[0].content[3].value.value = ratesdata.sample_rates[n].rate;
-				uiconf.sections[0].content[3].value.label = ratesdata.sample_rates[n].name;
+				uiconf.sections[0].content[2].value.value = ratesdata.sample_rates[n].rate;
+				uiconf.sections[0].content[2].value.label = ratesdata.sample_rates[n].name;
 			}
 		}
 		
 		for (var n = 0; n < bitdephtdata.bit_depths.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[4].options', {
+			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[3].options', {
 				value: bitdephtdata.bit_depths[n].bits,
 				label: bitdephtdata.bit_depths[n].name
 			});
 			
 			if(bitdephtdata.bit_depths[n].bits == parseInt(self.config.get('bit_depth')))
 			{
-				uiconf.sections[0].content[4].value.value = bitdephtdata.bit_depths[n].bits;
-				uiconf.sections[0].content[4].value.label = bitdephtdata.bit_depths[n].name;
+				uiconf.sections[0].content[3].value.value = bitdephtdata.bit_depths[n].bits;
+				uiconf.sections[0].content[3].value.label = bitdephtdata.bit_depths[n].name;
 			}
 		}
 		
-		uiconf.sections[0].content[5].value = self.config.get('channels');
+		uiconf.sections[0].content[4].value = self.config.get('channels');
 		
 		for (var n = 0; n < codecdata.codecs.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[6].options', {
+			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[5].options', {
 				value: codecdata.codecs[n].extension,
 				label: codecdata.codecs[n].name
 			});
 			
 			if(codecdata.codecs[n].extension == self.config.get('codec'))
 			{
-				uiconf.sections[0].content[6].value.value = codecdata.codecs[n].extension;
-				uiconf.sections[0].content[6].value.label = codecdata.codecs[n].name;
+				uiconf.sections[0].content[5].value.value = codecdata.codecs[n].extension;
+				uiconf.sections[0].content[5].value.label = codecdata.codecs[n].name;
 			}
 		}
+		self.logger.info("1/5 server settings loaded");
 		
 		// Client settings
 		uiconf.sections[1].content[0].value = self.config.get('client_enabled');
@@ -222,6 +227,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 				uiconf.sections[1].content[4].value.label = soundcards[n].name;
 			}
 		}
+		self.logger.info("2/5 client settings loaded");
 		
 		// MPD settings
 		uiconf.sections[2].content[0].value = self.config.get('patch_mpd_conf');
@@ -255,11 +261,49 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 		uiconf.sections[2].content[3].value = self.config.get('mpd_channels');		
 		uiconf.sections[2].content[4].value = self.config.get('enable_alsa_mpd');
 		uiconf.sections[2].content[5].value = self.config.get('enable_fifo_mpd');
+		self.logger.info("3/5 MPD settings loaded");
+		
+		// Spotify settings		
+		uiconf.sections[3].content[0].value = self.config.get('spotify_pipe_name');
+		
+		for (var n = 0; n < spotify.integrations.length; n++){
+			self.configManager.pushUIConfigParam(uiconf, 'sections[3].content[1].options', {
+				value: spotify.integrations[n].type,
+				label: spotify.integrations[n].name
+			});
+			
+			if(spotify.integrations[n].type == self.config.get('spotify_integration'))
+			{
+				uiconf.sections[3].content[1].value.value = spotify.integrations[n].type;
+				uiconf.sections[3].content[1].value.label = spotify.integrations[n].name;
+			}
+		}
+		
+		uiconf.sections[3].content[2].value = self.config.get('expose_additional_spotify_settings');
+		uiconf.sections[3].content[3].value = self.config.get('librespot_location');
+		uiconf.sections[3].content[4].value = self.config.get('spotify_username');
+		uiconf.sections[3].content[5].value = self.config.get('spotify_password');
+		uiconf.sections[3].content[6].value = self.config.get('spotify_devicename');
+		
+		for (var n = 0; n < kbpsdata.kbps.length; n++){
+			self.configManager.pushUIConfigParam(uiconf, 'sections[3].content[7].options', {
+				value: kbpsdata.kbps[n].bits,
+				label: kbpsdata.kbps[n].name
+			});
+			
+			if(kbpsdata.kbps[n].bits == parseInt(self.config.get('spotify_bitrate')))
+			{
+				uiconf.sections[3].content[7].value.value = kbpsdata.kbps[n].bits;
+				uiconf.sections[3].content[7].value.label = kbpsdata.kbps[n].name;
+			}
+		}
+		self.logger.info("4/5 spotify settings loaded");
 		
 		// Volumio info
-		uiconf.sections[3].content[0].value = soundcards[(self.commandRouter.sharedVars.get('alsa.outputdevice'))].name;
-		uiconf.sections[3].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
+		uiconf.sections[4].content[0].value = soundcards[(self.commandRouter.sharedVars.get('alsa.outputdevice'))].name;
+		uiconf.sections[4].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
 		// self.logger.info("ALSA.OutputDevice: " + self.commandRouter.sharedVars.get('alsa.outputdevice') + " ALSA.OutputDeviceMixer: " + self.commandRouter.sharedVars.get('alsa.outputdevicemixer'));
+		self.logger.info("5/5 environment settings loaded");
 		
 		self.logger.info("Populated config screen.");
 		
@@ -396,6 +440,39 @@ ControllerSnapCast.prototype.updateSnapServer = function (data)
 	return defer.promise;
 }
 
+ControllerSnapCast.prototype.updateSnapServerSpotify = function (data)
+{
+	var self = this;
+	var defer = libQ.defer();
+	
+	self.config.set('spotify_pipe_name', data['spotify_pipe_name']);
+	self.config.set('expose_additional_spotify_settings', data['expose_additional_spotify_settings']);
+	self.config.set('spotify_integration', data['spotify_integration'].value);
+	self.config.set('librespot_location', data['librespot_location']);
+	self.config.set('spotify_username', data['spotify_username']);
+	self.config.set('spotify_password', data['spotify_password']);
+	self.config.set('spotify_devicename', data['spotify_devicename']);
+	self.config.set('spotify_bitrate', data['spotify_bitrate'].value);
+	
+	self.logger.info("Successfully updated snapserver configuration");
+	
+	// self.updateSnapServerConfig(data)
+	// .then(function (restartService) {
+		// if(data['server_enabled'] == true)
+			// self.restartService("snapserver", false);
+		// else
+			// self.stopService("snapserver");
+	// })
+	// .fail(function(e)
+	// {
+		// defer.reject(new error());
+	// })
+	
+	// return defer.promise;
+	
+	return defer.resolve();
+}
+
 ControllerSnapCast.prototype.updateSnapClient = function (data)
 {
 	var self = this;
@@ -463,7 +540,8 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function (data)
 {
 	var self = this;
 	var defer = libQ.defer();
-	
+
+	// NEEDS REWRITE!!!!
 	var format = data['sample_rate'].value + ':' + data['bit_depth'].value + ':' + data['channels'];
 	
 	var mpdStreamName = (data['mpd_pipe_name'] == undefined ? 'VOLUMIO-MPD' : data['mpd_pipe_name']);

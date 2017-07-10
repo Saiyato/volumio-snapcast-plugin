@@ -6,11 +6,7 @@
   "mpd_pipe_name": {
     "type": "string",
     "value": "VOLUMIO-MPD"
-  },  
-  "spotify_pipe_name": {
-    "type": "string",
-    "value": "VOLUMIO-SPOTIFY"
-  },  
+  },    
   "sample_rate": {
     "type": "string",
     "value": "48000"
@@ -70,5 +66,37 @@
   "enable_fifo_mpd": {
     "type": "boolean",
     "value": true
+  },
+  "spotify_pipe_name": {
+    "type": "string",
+    "value": "VOLUMIO-SPOTIFY"
+  },
+  "spotify_integration": {
+    "type": "string",
+    "value": "volspotconnect"
+  },
+  "expose_additional_spotify_settings": {
+    "type": "boolean",
+    "value": false
+  },
+  "librespot_location": {
+    "type": "string",
+    "value": ""
+  },
+  "spotify_username": {
+    "type": "string",
+    "value": ""
+  },
+  "spotify_password": {
+    "type": "string",
+    "value": ""
+  },
+  "spotify_devicename": {
+    "type": "string",
+    "value": "SNAPCAST"
+  },
+  "spotify_bitrate": {
+    "type": "string",
+    "value": "320"
   }
 }

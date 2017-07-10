@@ -95,7 +95,11 @@ sed '/^pcm.!snapcast=/{h;s/=.*/=newvalue/};${x;/^$/{s//FOOBAR=newvalue/;H};x}' i
 
 VOLSPOTCONNECT2
 # implementation through SnapCast
-SNAPSERVER_OPTS="-d -s spotify:///data/plugins/music_service/volspotconnect2/librespot?name=Volumio-Spotify&devicename=Volumio-Spotify&mode=read"
+SNAPSERVER_OPTS="-d -s spotify:///data/plugins/music_service/volspotconnect2/librespot?name=Volumio-Spotify&devicename=Volumio-Spotify&bitrate=320"
+
+-s spotify:///home/volumio/librespot?name=Volumio-Spotify&devicename=test4&bitrate=320
+
+BITRATE IS IMPORTANT
 
 ###### IMPL.
 
