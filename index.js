@@ -425,7 +425,7 @@ ControllerSnapCast.prototype.updateSnapServer = function (data)
 	
 	self.logger.info("Successfully updated snapserver configuration");
 	
-	self.updateSnapServerConfig(data)
+	self.updateSnapServerConfig()
 	.then(function (restartService) {
 		if(data['server_enabled'] == true)
 			self.restartService("snapserver", false);
@@ -454,7 +454,7 @@ ControllerSnapCast.prototype.updateSnapServerSpotify = function (data)
 	self.config.set('spotify_devicename', data['spotify_devicename']);
 	self.config.set('spotify_bitrate', data['spotify_bitrate'].value);
 	
-	self.logger.info("Successfully updated snapserver configuration");
+	self.logger.info("Successfully updated snapserver spotify configuration");
 	
 	// self.updateSnapServerConfig(data)
 	// .then(function (restartService) {
@@ -471,6 +471,7 @@ ControllerSnapCast.prototype.updateSnapServerSpotify = function (data)
 	// return defer.promise;
 	
 	return defer.resolve();
+	return defer.promise;
 }
 
 ControllerSnapCast.prototype.updateSnapClient = function (data)
@@ -536,19 +537,21 @@ ControllerSnapCast.prototype.updateMPDConfig = function (data)
 	return defer.promise;
 }
 
-ControllerSnapCast.prototype.updateSnapServerConfig = function (data)
+ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 {
 	var self = this;
 	var defer = libQ.defer();
 
-	// NEEDS REWRITE!!!!
-	var format = data['sample_rate'].value + ':' + data['bit_depth'].value + ':' + data['channels'];
+	var format = self.config.get('sample_rate') + ':' + self.config.get('bit_depth') + ':' + self.config.get('channels');
 	
-	var mpdStreamName = (data['mpd_pipe_name'] == undefined ? 'VOLUMIO-MPD' : data['mpd_pipe_name']);
-	var spotifyStreamName = (data['spotify_pipe_name'] == undefined ? 'VOLUMIO-SPOTIFY' : data['spotify_pipe_name']);
-	var snapMode = (data['mode'] == undefined ? '\\&mode=read' : '\\&mode=' + data['mode']);
+	var mpdStreamName = (self.config.get('mpd_pipe_name') == undefined ? 'VOLUMIO-MPD' : self.config.get('mpd_pipe_name'));
+	var snapMode = (self.config.get('mode') == undefined ? '\\&mode=read' : '\\&mode=' + self.config.get('mode'));
 	var snapFormat = (format == undefined ? '' : '\\&sampleformat=' + format);
-	var snapCodec = (data['codec'].value == undefined ? '' : '\\&codec=' + data['codec'].value);
+	var snapCodec = (self.config.get('codec') == undefined ? '' : '\\&codec=' + self.config.get('codec'));
+	
+	var spotifyStreamName = (self.config.get('spotify_pipe_name') == undefined ? 'VOLUMIO-SPOTIFY' : self.config.get('spotify_pipe_name'));
+	var spotifyDevicename = (self.config.get('spotify_devicename') == undefined ? '' : '\\&devicename=' + self.config.get('spotify_devicename'));
+	var spotifyBitrate = (self.config.get('spotify_bitrate') == undefined ? '' : '\\&bitrate=' + self.config.get('spotify_bitrate'));
 	
 	// Omit default
 	if(snapFormat == "\\&sampleformat=48000:16:2")
@@ -557,7 +560,11 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function (data)
 		snapCodec = '';
 
 	var mpdPipe = "-s pipe:///tmp/snapfifo?name=" + mpdStreamName + snapMode + snapFormat + snapCodec;
+	
 	var spotifyPipe = " -s pipe:///tmp/spotififo?name=" + spotifyStreamName + snapMode;
+	if(self.config.get('spotify_integration') == "librespot")
+	{
+	}
 	
 	// sudo sed 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=AUDIOPHONICS\&mode=read&sampleformat=48000:16:2&codec=flac"|g' /etc/default/snapserver
 	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d " + mpdPipe + spotifyPipe + "\"|g' /etc/default/snapserver";

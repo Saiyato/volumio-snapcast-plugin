@@ -117,6 +117,13 @@ unirest.post('http://mockbin.com/request')
   console.log(response.body);
 })
 
+unirest.post('127.0.0.1')
+.type('json')
+.send({"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"})
+.end(function(response) {
+	self.logger.info(response.body)
+});
+
 // qobuz example
         unirest
             .get(uri)
