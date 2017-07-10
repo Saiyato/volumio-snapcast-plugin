@@ -90,7 +90,7 @@ SNAPSERVER_OPTS="-d -s spotify:///data/plugins/music_service/volspotconnect2/lib
 
 BITRATE IS IMPORTANT
 
-###### IMPL.
+###### Existing volspotconnect plugins
 
 VOLSPOTCONNECT
 ./spotify-connect-web  --username '{USER}' --password '{PASS}' --bitrate 320 --name 'Volumiotest' --dbrange 45 -o snapcast  &
