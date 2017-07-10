@@ -6,6 +6,7 @@
 		"id": "section_sampleconf",
 		"element": "section",
 		"label": "TRANSLATE.SNAPCAST.SERVER",
+		"description": "TRANSLATE.SNAPCAST.D_SERVER",
 		"icon": "fa-server",
 		"onSave": {
 			"type": "controller",
@@ -102,6 +103,7 @@
 		"id": "section_clientconf",
 		"element": "section",
 		"label": "TRANSLATE.SNAPCAST.CLIENT",
+		"description": "TRANSLATE.SNAPCAST.D_CLIENT",
 		"icon": "fa-music",
 		"onSave": {
 			"type": "controller",
@@ -177,6 +179,7 @@
 		"id": "section_mpdconf",
 		"element": "section",
 		"label": "TRANSLATE.SNAPCAST.MPD",
+		"description": "TRANSLATE.SNAPCAST.D_MPD",
 		"icon": "fa-play",
 		"onSave": {
 			"type": "controller",
@@ -268,6 +271,7 @@
 		"id": "section_spotifyconf",
 		"element": "section",
 		"label": "TRANSLATE.SNAPCAST.SPOTIFY",
+		"description": "TRANSLATE.SNAPCAST.D_SPOTIFY",
 		"icon": "fa-spotify",
 		"onSave": {
 			"type": "controller",
@@ -379,7 +383,7 @@
 		"id": "section_patchSpotifyTemplates",
 		"element": "section",
 		"label": "TRANSLATE.SNAPCAST.PATCHTEMPLATES",
-		"descripion": "TRANSLATE.SNAPCAST.D_PATCHTEMPLATES",
+		"description": "TRANSLATE.SNAPCAST.D_PATCHTEMPLATES",
 		"icon": "fa-wrench",
 		"onSave": {
 			"type": "controller",
@@ -403,6 +407,7 @@
 		"id": "section_loadedconf",
 		"element": "section",
 		"label": "TRANSLATE.SNAPCAST.LOADED",
+		"description": "TRANSLATE.SNAPCAST.D_LOADED",
 		"icon": "fa-cogs",
 		"content": [{
 			"id": "alsa_output_device",
