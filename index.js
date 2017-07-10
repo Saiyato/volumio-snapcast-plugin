@@ -125,11 +125,11 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 	self.getConf(this.configFile);
 	self.logger.info("Loaded the previous config.");
 	
-	var ratesdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/sample_rates.json'),  'utf8', {throws: false});
-	var bitdephtdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/bit_depths.json'),  'utf8', {throws: false});
-	var codecdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/codecs.json'),  'utf8', {throws: false});
-	var kbpsdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/kbps_spotify.json'),  'utf8', {throws: false});
-	var spotify = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/spotify_integrations.json'),  'utf8', {throws: false});
+	var ratesdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/sample_rates.json'),  'utf8', {throws: false});
+	var bitdephtdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/bit_depths.json'),  'utf8', {throws: false});
+	var codecdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/codecs.json'),  'utf8', {throws: false});
+	var kbpsdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/kbps_spotify.json'),  'utf8', {throws: false});
+	var spotify = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/spotify_integrations.json'),  'utf8', {throws: false});
 	
 	var volumioInstances = self.getVolumioInstances();
 	//self.logger.info("INSTANCES: " + JSON.stringify(volumioInstances));
