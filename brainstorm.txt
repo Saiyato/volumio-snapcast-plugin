@@ -95,6 +95,8 @@ BITRATE IS IMPORTANT
 VOLSPOTCONNECT
 ./spotify-connect-web  --username '{USER}' --password '{PASS}' --bitrate 320 --name 'Volumiotest' --dbrange 45 -o snapcast  &
 
+sed ’s|--playback_device.*|-o snapcast|g’ /data/plugins/music_service/volspotconnect/volspotconnect.tmpl
+
 VOLSPOTCONNECT2
 SNAPSERVER_OPTS="-d -s pipe:///tmp/spotififo?name=Volumio-Spotify&mode=read"
 ./librespot -b 320  -c /tmp ${shared} --name '${devicename}' --backend pipe --device /tmp/spotififo

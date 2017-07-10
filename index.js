@@ -129,7 +129,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 	var bitdephtdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/bit_depths.json'),  'utf8', {throws: false});
 	var codecdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/codecs.json'),  'utf8', {throws: false});
 	var kbpsdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/kbps_spotify.json'),  'utf8', {throws: false});
-	var spotify = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/spotify_integrations.json'),  'utf8', {throws: false});
+	var spotify = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/spotify_implementations.json'),  'utf8', {throws: false});
 	
 	var volumioInstances = self.getVolumioInstances();
 	//self.logger.info("INSTANCES: " + JSON.stringify(volumioInstances));
@@ -266,16 +266,16 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 		// Spotify settings		
 		uiconf.sections[3].content[0].value = self.config.get('spotify_pipe_name');
 		
-		for (var n = 0; n < spotify.integrations.length; n++){
+		for (var n = 0; n < spotify.implementations.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[3].content[1].options', {
-				value: spotify.integrations[n].type,
-				label: spotify.integrations[n].name
+				value: spotify.implementations[n].type,
+				label: spotify.implementations[n].name
 			});
 			
-			if(spotify.integrations[n].type == self.config.get('spotify_integration'))
+			if(spotify.implementations[n].type == self.config.get('spotify_implementation'))
 			{
-				uiconf.sections[3].content[1].value.value = spotify.integrations[n].type;
-				uiconf.sections[3].content[1].value.label = spotify.integrations[n].name;
+				uiconf.sections[3].content[1].value.value = spotify.implementations[n].type;
+				uiconf.sections[3].content[1].value.label = spotify.implementations[n].name;
 			}
 		}
 		
@@ -298,10 +298,13 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 			}
 		}
 		self.logger.info("4/5 spotify settings loaded");
+
+		// Patch templates
+		uiconf.sections[4].content[0].value = self.config.get('spotify_implementation');
 		
 		// Volumio info
-		uiconf.sections[4].content[0].value = soundcards[(self.commandRouter.sharedVars.get('alsa.outputdevice'))].name;
-		uiconf.sections[4].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
+		uiconf.sections[5].content[0].value = soundcards[(self.commandRouter.sharedVars.get('alsa.outputdevice'))].name;
+		uiconf.sections[5].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
 		// self.logger.info("ALSA.OutputDevice: " + self.commandRouter.sharedVars.get('alsa.outputdevice') + " ALSA.OutputDeviceMixer: " + self.commandRouter.sharedVars.get('alsa.outputdevicemixer'));
 		self.logger.info("5/5 environment settings loaded");
 		
@@ -447,7 +450,7 @@ ControllerSnapCast.prototype.updateSnapServerSpotify = function (data)
 	
 	self.config.set('spotify_pipe_name', data['spotify_pipe_name']);
 	self.config.set('expose_additional_spotify_settings', data['expose_additional_spotify_settings']);
-	self.config.set('spotify_integration', data['spotify_integration'].value);
+	self.config.set('spotify_implementation', data['spotify_implementation'].value);
 	self.config.set('librespot_location', data['librespot_location']);
 	self.config.set('spotify_username', data['spotify_username']);
 	self.config.set('spotify_password', data['spotify_password']);
@@ -559,7 +562,7 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 	var mpdPipe = "-s pipe:///tmp/snapfifo?name=" + mpdStreamName + snapMode + snapFormat + snapCodec;
 	
 	var spotifyPipe = " -s pipe:///tmp/spotififo?name=" + spotifyStreamName + snapMode;
-	if(self.config.get('spotify_integration') == "librespot")
+	if(self.config.get('spotify_implementation') == "librespot")
 	{
 		spotifyPipe = " -s spotify://" + self.config.get('librespot_location') + "?name=" + spotifyStreamName + spotifyDevicename + spotifyBitrate;
 	}
@@ -634,6 +637,44 @@ ControllerSnapCast.prototype.generateMPDUpdateScript = function()
 		return defer.promise;
 }
 
+ControllerSnapCast.prototype.updateSpotifyImplementation = function()
+{
+	var self = this;
+	var defer = libQ.defer();
+
+	var imp = self.config.get('spotify_implementation');
+
+	if(imp == "volspotconnect1")
+	{
+		self.replaceStringInFile("--playback_device", "-o snapcast $\\{familyshare\\} \\&", "/data/plugins/music_service/volspotconnect/volspotconnect.tmpl");
+		defer.resolve();
+	}
+	else if (imp == "volspotconnect2")
+	{
+		self.replaceStringInFile("--backend", "--backend pipe --device /tmp/spotififo", "/data/plugins/music_service/volspotconnect2/volspotconnect2.tmpl");
+		defer.resolve();
+	}
+
+	var responseData = {
+	//title: self.commandRouter.getI18nString('KODI.RESTARTTITLE'),
+	title: 'Configuration required [no translation available]',
+	//message: self.commandRouter.getI18nString('KODI.RESTARTMESSAGE'),
+	message: 'Changes have been made to the Spotify implementation template, you need to save the settings in the corresponding plugin again for the changes to take effect. [no translation available]',
+	size: 'lg',
+	buttons: [{
+				name: self.commandRouter.getI18nString('COMMON.CONTINUE'),
+				class: 'btn btn-info',
+				emit: '',
+				payload: ''
+			}
+		]
+	}
+
+	self.commandRouter.broadcastMessage("openModal", responseData);
+
+	return defer.promise;
+}
+
 ControllerSnapCast.prototype.executeShellScript = function (shellScript)
 {
 	var self = this;
@@ -653,6 +694,7 @@ ControllerSnapCast.prototype.executeShellScript = function (shellScript)
 		self.commandRouter.pushToastMessage('success', "Script executed", "Successfully executed script: " + shellScript);
 		defer.resolve();
 	});
+
 	
 	return defer.promise;
 }

@@ -268,7 +268,7 @@
 		"id": "section_spotifyconf",
 		"element": "section",
 		"label": "TRANSLATE.SNAPCAST.SPOTIFY",
-		"icon": "fa-server",
+		"icon": "fa-spotify",
 		"onSave": {
 			"type": "controller",
 			"endpoint": "miscellanea/SnapCast",
@@ -277,7 +277,7 @@
 		"saveButton": {
 			"label": "TRANSLATE.SNAPCAST.SAVE",
 			"data": ["spotify_pipe_name",
-			"spotify_integration",
+			"spotify_implementation",
 			"expose_additional_spotify_settings",
 			"librespot_location",
 			"spotify_username",
@@ -294,10 +294,10 @@
 			"value": "VOLUMIO-SPOTIFY"
 		},
 		{
-			"id": "spotify_integration",
+			"id": "spotify_implementation",
 			"element": "select",
-			"doc": "TRANSLATE.SNAPCAST.D_SPOTIFY_INTEGRATION",
-			"label": "TRANSLATE.SNAPCAST.SPOTIFY_INTEGRATION",
+			"doc": "TRANSLATE.SNAPCAST.D_SPOTIFY_IMPLEMENTATION",
+			"label": "TRANSLATE.SNAPCAST.SPOTIFY_IMPLEMENTATION",
 			"value": {
 				"value": "volspotconnect1",
 				"label": "Volspotconnect (spotify-web-connect)"
@@ -368,7 +368,35 @@
 				"value": 160,
 				"label": "160 kbps (normal quality)"
 			},
-			"options": []
+			"options": [],
+			"visibleIf": {
+				"field": "expose_additional_spotify_settings",
+				"value": true
+			}
+		}]
+	},
+	{
+		"id": "section_patchSpotifyTemplates",
+		"element": "section",
+		"label": "TRANSLATE.SNAPCAST.PATCHTEMPLATES",
+		"descripion": "TRANSLATE.SNAPCAST.D_PATCHTEMPLATES",
+		"icon": "fa-wrench",
+		"onSave": {
+			"type": "controller",
+			"endpoint": "miscellanea/SnapCast",
+			"method": "updateSpotifyImplementation"
+		},
+		"saveButton": {
+			"label": "TRANSLATE.SNAPCAST.PATCH",
+			"data": []
+		},
+		"content": [{
+			"id": "spotify_implementation",
+			"type": "text",
+			"element": "input",
+			"doc": "TRANSLATE.SNAPCAST.D_SELECTED_IMPLEMENTATION",
+			"label": "TRANSLATE.SNAPCAST.SELECTED_IMPLEMENTATION",
+			"value": "2"
 		}]
 	},
 	{

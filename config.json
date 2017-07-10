@@ -71,7 +71,7 @@
     "type": "string",
     "value": "VOLUMIO-SPOTIFY"
   },
-  "spotify_integration": {
+  "spotify_implementation": {
     "type": "string",
     "value": "volspotconnect"
   },
