@@ -637,6 +637,36 @@ ControllerSnapCast.prototype.generateMPDUpdateScript = function()
 		return defer.promise;
 }
 
+ControllerSnapCast.prototype.regenerateAsoundConfig = function()
+{
+	var self = this;
+	var defer = libQ.defer();
+	
+	fs.readFile(__dirname + "/mpd_switch_to_fifo.tmpl", 'utf8', function (err, data) {
+            if (err) {
+                defer.reject(new Error(err));
+                //return console.log(err);
+            }
+
+			var conf1 = data.replace("${SAMPLE_RATE}", self.config.get('mpd_sample_rate'));
+			var conf2 = conf2.replace("${CHANNELS}", self.config.get('/tmp/spotififo'));
+			var conf3 = conf2.replace(/ENABLE_ALSA/g, alsa);
+			
+			// clear out old configs and write new section to asound.conf
+			
+			fs.writeFile(__dirname + "/mpd_switch_to_fifo.sh", conf5, 'utf8', function (err) {
+                if (err)
+				{
+					self.commandRouter.pushConsoleMessage('Could not write the script with error: ' + err);
+                    defer.reject(new Error(err));
+				}
+                else 
+					defer.resolve();
+        });
+	});
+	
+}
+
 ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 {
 	var self = this;
@@ -656,9 +686,7 @@ ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 	}
 
 	var responseData = {
-	//title: self.commandRouter.getI18nString('KODI.RESTARTTITLE'),
 	title: 'Configuration required [no translation available]',
-	//message: self.commandRouter.getI18nString('KODI.RESTARTMESSAGE'),
 	message: 'Changes have been made to the Spotify implementation template, you need to save the settings in the corresponding plugin again for the changes to take effect. [no translation available]',
 	size: 'lg',
 	buttons: [{
