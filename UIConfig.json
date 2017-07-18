@@ -33,8 +33,8 @@
 			"id": "mpd_pipe_name",
 			"element": "input",
 			"type": "text",
-			"doc": "TRANSLATE.SNAPCAST.D_MPD_PIPE_NAME",
-			"label": "TRANSLATE.SNAPCAST.MPD_PIPE_NAME",
+			"doc": "TRANSLATE.SNAPCAST.D_MAIN_PIPE_NAME",
+			"label": "TRANSLATE.SNAPCAST.MAIN_PIPE_NAME",
 			"value": "VOLUMIO-MPD",
 			"visibleIf": {
 				"field": "server_enabled",
@@ -265,6 +265,30 @@
 				"field": "patch_mpd",
 				"value": true
 			}
+		}]
+	},
+	{
+		"id": "section_patchAsound",
+		"element": "section",
+		"label": "TRANSLATE.SNAPCAST.PATCHASOUND",
+		"description": "TRANSLATE.SNAPCAST.D_PATCHASOUND",
+		"icon": "fa-wrench",
+		"onSave": {
+			"type": "controller",
+			"endpoint": "miscellanea/SnapCast",
+			"method": "patchAsoundConfig"
+		},
+		"saveButton": {
+			"label": "TRANSLATE.SNAPCAST.PATCH",
+			"data": []
+		},
+		"content": [{
+			"id": "alsa_configuration",
+			"type": "text",
+			"element": "input",
+			"doc": "TRANSLATE.SNAPCAST.D_ASOUND_CONF",
+			"label": "TRANSLATE.SNAPCAST.ASOUND_CONF",
+			"value": ""
 		}]
 	},
 	{

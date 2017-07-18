@@ -142,3 +142,9 @@ unirest.post('127.0.0.1')
                     defer.reject(new Error());
                 }
             });
+
+			
+##### REGENERATE ASOUND.CONF
+sed -i '/#SNAPCAST/,/#ENDOFSNAPCAST/d' /etc/asound.conf
+
+cat /template >> asound.conf

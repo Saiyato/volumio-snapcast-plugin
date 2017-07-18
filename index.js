@@ -263,48 +263,51 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 		uiconf.sections[2].content[5].value = self.config.get('enable_fifo_mpd');
 		self.logger.info("3/5 MPD settings loaded");
 		
+		// Patch asound
+		uiconf.sections[3].content[0].value = '/etc/asound.conf';
+		
 		// Spotify settings		
-		uiconf.sections[3].content[0].value = self.config.get('spotify_pipe_name');
+		uiconf.sections[4].content[0].value = self.config.get('spotify_pipe_name');
 		
 		for (var n = 0; n < spotify.implementations.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[3].content[1].options', {
+			self.configManager.pushUIConfigParam(uiconf, 'sections[4].content[1].options', {
 				value: spotify.implementations[n].type,
 				label: spotify.implementations[n].name
 			});
 			
 			if(spotify.implementations[n].type == self.config.get('spotify_implementation'))
 			{
-				uiconf.sections[3].content[1].value.value = spotify.implementations[n].type;
-				uiconf.sections[3].content[1].value.label = spotify.implementations[n].name;
+				uiconf.sections[4].content[1].value.value = spotify.implementations[n].type;
+				uiconf.sections[4].content[1].value.label = spotify.implementations[n].name;
 			}
 		}
 		
-		uiconf.sections[3].content[2].value = self.config.get('expose_additional_spotify_settings');
-		uiconf.sections[3].content[3].value = self.config.get('librespot_location');
-		uiconf.sections[3].content[4].value = self.config.get('spotify_username');
-		uiconf.sections[3].content[5].value = self.config.get('spotify_password');
-		uiconf.sections[3].content[6].value = self.config.get('spotify_devicename');
+		uiconf.sections[4].content[2].value = self.config.get('expose_additional_spotify_settings');
+		uiconf.sections[4].content[3].value = self.config.get('librespot_location');
+		uiconf.sections[4].content[4].value = self.config.get('spotify_username');
+		uiconf.sections[4].content[5].value = self.config.get('spotify_password');
+		uiconf.sections[4].content[6].value = self.config.get('spotify_devicename');
 		
 		for (var n = 0; n < kbpsdata.kbps.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[3].content[7].options', {
+			self.configManager.pushUIConfigParam(uiconf, 'sections[4].content[7].options', {
 				value: kbpsdata.kbps[n].bits,
 				label: kbpsdata.kbps[n].name
 			});
 			
 			if(kbpsdata.kbps[n].bits == parseInt(self.config.get('spotify_bitrate')))
 			{
-				uiconf.sections[3].content[7].value.value = kbpsdata.kbps[n].bits;
-				uiconf.sections[3].content[7].value.label = kbpsdata.kbps[n].name;
+				uiconf.sections[4].content[7].value.value = kbpsdata.kbps[n].bits;
+				uiconf.sections[4].content[7].value.label = kbpsdata.kbps[n].name;
 			}
 		}
 		self.logger.info("4/5 spotify settings loaded");
 
 		// Patch templates
-		uiconf.sections[4].content[0].value = self.config.get('spotify_implementation');
+		uiconf.sections[5].content[0].value = self.config.get('spotify_implementation');
 		
 		// Volumio info
-		uiconf.sections[5].content[0].value = soundcards[(self.commandRouter.sharedVars.get('alsa.outputdevice'))].name;
-		uiconf.sections[5].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
+		uiconf.sections[6].content[0].value = soundcards[(self.commandRouter.sharedVars.get('alsa.outputdevice'))].name;
+		uiconf.sections[6].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
 		// self.logger.info("ALSA.OutputDevice: " + self.commandRouter.sharedVars.get('alsa.outputdevice') + " ALSA.OutputDeviceMixer: " + self.commandRouter.sharedVars.get('alsa.outputdevicemixer'));
 		self.logger.info("5/5 environment settings loaded");
 		
@@ -567,7 +570,6 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 		spotifyPipe = " -s spotify://" + self.config.get('librespot_location') + "?name=" + spotifyStreamName + spotifyDevicename + spotifyBitrate;
 	}
 	
-	// sudo sed 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=AUDIOPHONICS\&mode=read&sampleformat=48000:16:2&codec=flac"|g' /etc/default/snapserver
 	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d " + mpdPipe + spotifyPipe + "\"|g' /etc/default/snapserver";
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
@@ -608,7 +610,7 @@ ControllerSnapCast.prototype.generateMPDUpdateScript = function()
 	var self = this;
 	var defer = libQ.defer();
 	
-	fs.readFile(__dirname + "/mpd_switch_to_fifo.tmpl", 'utf8', function (err, data) {
+	fs.readFile(__dirname + "/templates/mpd_switch_to_fifo.template", 'utf8', function (err, data) {
             if (err) {
                 defer.reject(new Error(err));
                 //return console.log(err);
@@ -637,24 +639,95 @@ ControllerSnapCast.prototype.generateMPDUpdateScript = function()
 		return defer.promise;
 }
 
-ControllerSnapCast.prototype.regenerateAsoundConfig = function()
+ControllerSnapCast.prototype.patchAsoundConfig = function()
+{
+	var self = this;
+	var defer = libQ.defer();
+	var pluginName = "SnapCast";
+	var pluginCategory = "miscellanea";
+	
+	// define the replacement dictionary
+	var replacementDictionary = [
+		{ placeholder: "${SAMPLE_RATE}", replacement: self.config.get('sample_rate') },
+		{ placeholder: "${OUTPUT_PIPE}", replacement: "/tmp/spotififo" }
+	];
+	
+	self.createAsoundConfig(pluginName, replacementDictionary)
+	.then(function (touchFile) {
+		var edefer = libQ.defer();
+		exec("/bin/echo volumio | /usr/bin/sudo -S /bin/touch /etc/asound.conf", {uid:1000, gid:1000}, function (error, stout, stderr) {
+			if(error)
+			{
+				console.log(stderr);
+				self.commandRouter.pushConsoleMessage('Could not touch config with error: ' + error);
+				self.commandRouter.pushToastMessage('error', "Configuration failed", "Failed to touch asound configuration file with error: " + error);
+				edefer.reject(new Error(error));
+			}
+			else
+				edefer.resolve();
+			
+			self.commandRouter.pushConsoleMessage('Touched asound config');
+			return edefer.promise;
+		});
+	}
+	.then(function (clear_current_asound_config) {
+		var edefer = libQ.defer();
+		exec("/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- '/#" + pluginName.toUpperCase() + "/,/#ENDOF" + pluginName.toUpperCase() + "/d' /etc/asound.conf", {uid:1000, gid:1000}, function (error, stout, stderr) {
+			if(error)
+			{
+				console.log(stderr);
+				self.commandRouter.pushConsoleMessage('Could not clear config with error: ' + error);
+				self.commandRouter.pushToastMessage('error', "Configuration failed", "Failed to update asound configuration with error: " + error);
+				edefer.reject(new Error(error));
+			}
+			else
+				edefer.resolve();
+			
+			self.commandRouter.pushConsoleMessage('Cleared previous asound config');
+			return edefer.promise;
+		});
+	})
+	.then(function (copy_new_config) {
+		var edefer = libQ.defer();
+		var cmd = "/bin/echo volumio | /usr/bin/sudo -S /bin/cat /data/plugins/" + pluginCategory + "/" + pluginName + "/asound.section >> /etc/asound.conf";
+		fs.writeFile(__dirname + "/" + pluginName.toLowerCase() + "_asound_patch.sh", cmd, 'utf8', function (err) {
+			if (err)
+			{
+				self.commandRouter.pushConsoleMessage('Could not write the script with error: ' + err);
+				edefer.reject(new Error(err));
+			}
+			else
+				edefer.resolve();
+		});
+		
+		return edefer.promise;
+	})
+	.then(function (executeScript) {
+		self.executeShellScript(__dirname + '/' + pluginName.toLowerCase() + '_asound_patch.sh');
+		defer.resolve();
+	});
+	
+	self.commandRouter.pushToastMessage('success', "Successful push", "Successfully pushed new ALSA configuration");
+	return defer.promise;
+}
+
+ControllerSnapCast.prototype.createAsoundConfig = function(pluginName, replacements)
 {
 	var self = this;
 	var defer = libQ.defer();
 	
-	fs.readFile(__dirname + "/mpd_switch_to_fifo.tmpl", 'utf8', function (err, data) {
-            if (err) {
-                defer.reject(new Error(err));
-                //return console.log(err);
-            }
+	fs.readFile(__dirname + "/templates/asound." + pluginName.toLowerCase(), 'utf8', function (err, data) {
+		if (err) {
+			defer.reject(new Error(err));
+		}
 
-			var conf1 = data.replace("${SAMPLE_RATE}", self.config.get('mpd_sample_rate'));
-			var conf2 = conf2.replace("${CHANNELS}", self.config.get('/tmp/spotififo'));
-			var conf3 = conf2.replace(/ENABLE_ALSA/g, alsa);
+		var tmpConf = data;
+		for (var rep in replacements)
+		{
+			tmpConf = tmpConf.replace(replacements[rep]["placeholder"], replacements[rep]["replacement"]);			
+		}
 			
-			// clear out old configs and write new section to asound.conf
-			
-			fs.writeFile(__dirname + "/mpd_switch_to_fifo.sh", conf5, 'utf8', function (err) {
+		fs.writeFile(__dirname + "/asound.section", tmpConf, 'utf8', function (err) {
                 if (err)
 				{
 					self.commandRouter.pushConsoleMessage('Could not write the script with error: ' + err);
@@ -665,6 +738,7 @@ ControllerSnapCast.prototype.regenerateAsoundConfig = function()
         });
 	});
 	
+	return defer.promise;
 }
 
 ControllerSnapCast.prototype.updateSpotifyImplementation = function()
