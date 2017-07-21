@@ -19,7 +19,7 @@ function ControllerSnapCast(context)
 	this.logger = this.context.logger;
 	this.configManager = this.context.configManager;
 
-}
+};
 
 ControllerSnapCast.prototype.onVolumioStart = function()
 {
@@ -34,7 +34,7 @@ ControllerSnapCast.prototype.onVolumioStart = function()
 	//self.logger.info("Config file: " + this.configFile);
 	
 	return libQ.resolve();	
-}
+};
 
 ControllerSnapCast.prototype.getConfigurationFiles = function()
 {
@@ -81,6 +81,7 @@ ControllerSnapCast.prototype.stop = function() {
 ControllerSnapCast.prototype.onStart = function() {
 	var self = this;
 	var defer = libQ.defer();
+	self.logger.info("Starting SnapCast services...");
 
 	self.restartService('snapserver', true)
 	.then(function(startClient){
@@ -91,6 +92,7 @@ ControllerSnapCast.prototype.onStart = function() {
 	.fail(function(e)
 	{
 		self.commandRouter.pushToastMessage('error', "Startup failed", "Could not start the SnapCast plugin in a fashionable manner.");
+		self.logger.info("Could not start the SnapCast plugin in a fashionable manner.");
 		defer.reject(new error());
 	});
 
@@ -186,7 +188,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 				uiconf.sections[0].content[5].value.label = codecdata.codecs[n].name;
 			}
 		}
-		self.logger.info("1/5 server settings loaded");
+		self.logger.info("1/7 server settings loaded");
 		
 		// Client settings
 		uiconf.sections[1].content[0].value = self.config.get('client_enabled');
@@ -227,7 +229,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 				uiconf.sections[1].content[4].value.label = soundcards[n].name;
 			}
 		}
-		self.logger.info("2/5 client settings loaded");
+		self.logger.info("2/7 client settings loaded");
 		
 		// MPD settings
 		uiconf.sections[2].content[0].value = self.config.get('patch_mpd_conf');
@@ -261,13 +263,14 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 		uiconf.sections[2].content[3].value = self.config.get('mpd_channels');		
 		uiconf.sections[2].content[4].value = self.config.get('enable_alsa_mpd');
 		uiconf.sections[2].content[5].value = self.config.get('enable_fifo_mpd');
-		self.logger.info("3/5 MPD settings loaded");
+		self.logger.info("3/7 MPD settings loaded");
 		
 		// Patch asound
 		uiconf.sections[3].content[0].value = '/etc/asound.conf';
+		self.logger.info("4/7 asound settings loaded");
 		
 		// Spotify settings		
-		uiconf.sections[4].content[0].value = self.config.get('spotify_pipe_name');
+		uiconf.sections[4].content[0].value = self.config.get('spotify_pipe_name');		
 		
 		for (var n = 0; n < spotify.implementations.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[4].content[1].options', {
@@ -300,16 +303,17 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 				uiconf.sections[4].content[7].value.label = kbpsdata.kbps[n].name;
 			}
 		}
-		self.logger.info("4/5 spotify settings loaded");
+		self.logger.info("5/7 spotify settings loaded");
 
 		// Patch templates
 		uiconf.sections[5].content[0].value = self.config.get('spotify_implementation');
+		self.logger.info("6/7 template settings loaded");
 		
 		// Volumio info
 		uiconf.sections[6].content[0].value = soundcards[(self.commandRouter.sharedVars.get('alsa.outputdevice'))].name;
 		uiconf.sections[6].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
 		// self.logger.info("ALSA.OutputDevice: " + self.commandRouter.sharedVars.get('alsa.outputdevice') + " ALSA.OutputDeviceMixer: " + self.commandRouter.sharedVars.get('alsa.outputdevicemixer'));
-		self.logger.info("5/5 environment settings loaded");
+		self.logger.info("7/7 environment settings loaded");
 		
 		self.logger.info("Populated config screen.");
 		
@@ -669,7 +673,7 @@ ControllerSnapCast.prototype.patchAsoundConfig = function()
 			self.commandRouter.pushConsoleMessage('Touched asound config');
 			return edefer.promise;
 		});
-	}
+	})
 	.then(function (clear_current_asound_config) {
 		var edefer = libQ.defer();
 		exec("/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- '/#" + pluginName.toUpperCase() + "/,/#ENDOF" + pluginName.toUpperCase() + "/d' /etc/asound.conf", {uid:1000, gid:1000}, function (error, stout, stderr) {
