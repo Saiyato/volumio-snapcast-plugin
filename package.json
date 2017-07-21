@@ -1,6 +1,6 @@
 {
   "name": "SnapCast",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "SnapCast integration pack",
   "main": "index.js",
   "scripts": {
