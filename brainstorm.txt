@@ -101,6 +101,10 @@ VOLSPOTCONNECT2
 SNAPSERVER_OPTS="-d -s pipe:///tmp/spotififo?name=Volumio-Spotify&mode=read"
 ./librespot -b 320  -c /tmp ${shared} --name '${devicename}' --backend pipe --device /tmp/spotififo
 
+{"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"}
+{"id":1, "method":"Server.GetStatus"}
+
+volumioupdatevolume
 
 ##### CHANGING STREAMS
 https://github.com/Mashape/unirest-nodejs

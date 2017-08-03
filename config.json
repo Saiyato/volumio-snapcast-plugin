@@ -13,7 +13,7 @@
   },
   "bit_depth": {
     "type": "string",
-    "value": " 16" 
+    "value": "16" 
   },
   "channels": {
     "type": "string",
@@ -27,9 +27,13 @@
     "type": "boolean",
     "value": true
   },
+  "client_id": {
+    "type": "string",
+    "value": ""
+  },
   "volumio_host": {
     "type": "string",
-    "value": "localhost"
+    "value": "127.0.0.1"
   },
   "custom_host": {
     "type": "boolean",
@@ -37,7 +41,7 @@
   },
   "host": {
     "type": "string",
-    "value": "localhost"
+    "value": ""
   },
   "soundcard": {
     "type": "string",
@@ -53,7 +57,7 @@
   },
   "mpd_bit_depth": {
     "type": "string",
-    "value": " 16" 
+    "value": "16" 
   },
   "mpd_channels": {
     "type": "string",
@@ -67,6 +71,14 @@
     "type": "boolean",
     "value": true
   },
+  "spotify_dedicated_stream": {
+    "type": "boolean",
+    "value": true
+  },
+  "spotify_pipe": {
+    "type": "string",
+    "value": "/tmp/spotififo"
+  },
   "spotify_pipe_name": {
     "type": "string",
     "value": "VOLUMIO-SPOTIFY"
@@ -74,6 +86,18 @@
   "spotify_implementation": {
     "type": "string",
     "value": "volspotconnect"
+  },
+  "spotify_sample_rate": {
+    "type": "string",
+    "value": "48000"
+  },
+  "spotify_bit_depth": {
+    "type": "string",
+    "value": "16" 
+  },
+  "spotify_channels": {
+    "type": "string",
+    "value": "2"
   },
   "expose_additional_spotify_settings": {
     "type": "boolean",
