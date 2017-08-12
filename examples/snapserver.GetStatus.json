@@ -1,0 +1,94 @@
+{
+	"id": 1,
+	"jsonrpc": "2.0",
+	"result": {
+		"server": {
+			"groups": [{
+				"clients": [{
+					"config": {
+						"instance": 1,
+						"latency": 0,
+						"name": "",
+						"volume": {
+							"muted": false,
+							"percent": 100
+						}
+					},
+					"connected": true,
+					"host": {
+						"arch": "armv7l",
+						"ip": "192.168.178.118",
+						"mac": "b8:27:eb:20:27:4b",
+						"name": "volumiotest",
+						"os": "Raspbian GNU/Linux 8 (jessie)"
+					},
+					"id": "b8:27:eb:20:27:4b",
+					"lastSeen": {
+						"sec": 1501759569,
+						"usec": 572459
+					},
+					"snapclient": {
+						"name": "Snapclient",
+						"protocolVersion": 2,
+						"version": "0.11.1"
+					}
+				}],
+				"id": "4895b118-d04a-0515-2a4f-7c297d015a97",
+				"muted": false,
+				"name": "",
+				"stream_id": "undefined"
+			}],
+			"server": {
+				"host": {
+					"arch": "armv7l",
+					"ip": "",
+					"mac": "",
+					"name": "volumiotest",
+					"os": "Raspbian GNU/Linux 8 (jessie)"
+				},
+				"snapserver": {
+					"controlProtocolVersion": 1,
+					"name": "Snapserver",
+					"protocolVersion": 1,
+					"version": "0.11.1"
+				}
+			},
+			"streams": [{
+				"id": "VOLUMIO-MPD",
+				"status": "idle",
+				"uri": {
+					"fragment": "",
+					"host": "",
+					"path": "/tmp/snapfifo",
+					"query": {
+						"buffer_ms": "20",
+						"codec": "flac",
+						"mode": "read",
+						"name": "VOLUMIO-MPD",
+						"sampleformat": "44100:16:2"
+					},
+					"raw": "pipe:///tmp/snapfifo?name=VOLUMIO-MPD&mode=read&sampleformat=44100:16:2",
+					"scheme": "pipe"
+				}
+			},
+			{
+				"id": "undefined",
+				"status": "idle",
+				"uri": {
+					"fragment": "",
+					"host": "",
+					"path": "/tmp/spotififo",
+					"query": {
+						"buffer_ms": "20",
+						"codec": "flac",
+						"mode": "read",
+						"name": "Spotify",
+						"sampleformat": "48000:16:2"
+					},
+					"raw": "pipe:///tmp/spotififo?name=Spotify&mode=read",
+					"scheme": "pipe"
+				}
+			}]
+		}
+	}
+}

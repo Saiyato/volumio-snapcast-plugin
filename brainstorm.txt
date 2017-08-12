@@ -107,46 +107,13 @@ SNAPSERVER_OPTS="-d -s pipe:///tmp/spotififo?name=Volumio-Spotify&mode=read"
 volumioupdatevolume
 
 ##### CHANGING STREAMS
-https://github.com/Mashape/unirest-nodejs
+{"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"}
+{"id":8,"jsonrpc":"2.0","method":"Client.GetStatus","params":{"id":"b8:27:eb:20:27:4b"}}
 
-var unirest = require('unirest'); -> Qobuz plugin
-var Request = unirest.get('http://mockbin.com/request');
-
-// Example
-unirest.post('http://mockbin.com/request')
-.type('json')
-.send({
-  foo: 'bar',
-  hello: 3
-})
-.end(function (response) {
-  console.log(response.body);
-})
-
-unirest.post('127.0.0.1')
-.type('json')
-.send({"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"})
-.end(function(response) {
-	self.logger.info(response.body)
-});
-
-// qobuz example
-        unirest
-            .get(uri)
-            .proxy(proxy)
-            .headers(headers)
-            .query(params)
-            .end(function (response) {
-                if (response.ok) {
-                    logger.qobuzDebug('makeQobuzRequest response: ' + JSON.stringify(response.body));
-                    defer.resolve(response.body);
-                }
-                else {
-                    logger.info('[' + Date.now() + '] ' + 'makeQobuzRequest failed response: ' + JSON.stringify(response.body));
-                    defer.reject(new Error());
-                }
-            });
-
+{"id":8,"jsonrpc":"2.0","method":"Client.SetVolume","params":{"id":"b8:27:eb:20:27:4b","volume":{"muted":false,"percent":33}}}
+{"id":4,"jsonrpc":"2.0","method":"Group.SetStream","params":{"id":"4dcc4e3b-c699-a04b-7f0c-8260d23c43e1","stream_id":"stream 1"}}
+			
+LINQ like operations: https://gist.github.com/DanDiplo/30528387da41332ff22b 
 			
 ##### REGENERATE ASOUND.CONF
 sed -i '/#SNAPCAST/,/#ENDOFSNAPCAST/d' /etc/asound.conf

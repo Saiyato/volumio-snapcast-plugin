@@ -1,0 +1,33 @@
+{
+	"misc": {
+		"debug": true
+	},
+	"list": [{
+		"id": "d796b6c4-35aa-42f3-bbb0-9a7e7c3be253",
+		"host": "http://192.168.178.171",
+		"name": "Volumiobplustest",
+		"isSelf": false,
+		"state": {
+			"status": "stop",
+			"volume": 0,
+			"mute": false,
+			"artist": "",
+			"track": "",
+			"albumart": "http://192.168.178.171/albumart"
+		}
+	},
+	{
+		"id": "e29464c2-55a7-4c69-907a-db0cef91c589",
+		"host": "http://192.168.178.88",
+		"name": "Volumiomain",
+		"isSelf": false,
+		"state": {
+			"status": "stop",
+			"volume": 0,
+			"mute": false,
+			"artist": "",
+			"track": "",
+			"albumart": "http://192.168.178.88/albumart"
+		}
+	}]
+}
