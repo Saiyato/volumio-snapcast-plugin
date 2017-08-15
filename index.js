@@ -146,11 +146,11 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 	self.getConf(this.configFile);
 	self.logger.info("Loaded the previous config.");
 	
-	var ratesdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/sample_rates.json'),  'utf8', {throws: false});
-	var bitdephtdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/bit_depths.json'),  'utf8', {throws: false});
-	var codecdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/codecs.json'),  'utf8', {throws: false});
-	var kbpsdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/kbps_spotify.json'),  'utf8', {throws: false});
-	var spotify = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/options/spotify_implementations.json'),  'utf8', {throws: false});
+	var ratesdata = fs.readJsonSync((__dirname + '/options/sample_rates.json'),  'utf8', {throws: false});
+	var bitdephtdata = fs.readJsonSync((__dirname +'/options/bit_depths.json'),  'utf8', {throws: false});
+	var codecdata = fs.readJsonSync((__dirname + '/options/codecs.json'),  'utf8', {throws: false});
+	var kbpsdata = fs.readJsonSync((__dirname + '/options/kbps_spotify.json'),  'utf8', {throws: false});
+	var spotify = fs.readJsonSync((__dirname + '/options/spotify_implementations.json'),  'utf8', {throws: false});
 	
 	var volumioInstances = self.getVolumioInstances();
 	
@@ -241,13 +241,13 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 		
 		for (var n = 0; n < soundcards.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[1].content[4].options', {
-				value: soundcards[n].cardId,
+				value: soundcards[n].hw,
 				label: soundcards[n].name
 			});
 			
-			if(soundcards[n].cardId == self.config.get('soundcard'))
+			if(soundcards[n].hw == self.config.get('soundcard'))
 			{
-				uiconf.sections[1].content[4].value.value = soundcards[n].cardId;
+				uiconf.sections[1].content[4].value.value = soundcards[n].hw;
 				uiconf.sections[1].content[4].value.label = soundcards[n].name;
 			}
 		}
@@ -393,7 +393,6 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 				break;
 			}
 		}
-		//uiconf.sections[7].content[0].value = soundcards[(self.commandRouter.sharedVars.get('alsa.outputdevice'))].name;
 		uiconf.sections[7].content[0].value = soundcard;
 		uiconf.sections[7].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
 		// self.logger.info("ALSA.OutputDevice: " + self.commandRouter.sharedVars.get('alsa.outputdevice') + " ALSA.OutputDeviceMixer: " + self.commandRouter.sharedVars.get('alsa.outputdevicemixer'));
@@ -967,6 +966,7 @@ ControllerSnapCast.prototype.getAlsaCards = function () {
 				var cardinfo = self.getCardinfo(cardnum);
 				var rawname = cardinfo.name;
 				var name = rawname;
+				var hw = fs.readFileSync(soundCardDir + soundFiles[i] + '/id').toString().trim();
 				var id = cardinfo.id;
                     for (var n = 0; n < carddata.cards.length; n++){
                         var cardname = carddata.cards[n].name.toString().trim();
@@ -984,17 +984,17 @@ ControllerSnapCast.prototype.getAlsaCards = function () {
                                 multi = false;
                                 name = carddata.cards[n].prettyname;
                             }
-
                         }
                     } if (!multi){
-                        cards.push({id: id, name: name});
+                        cards.push({id: id, hw: hw, name: name});
                     }
                 }
 
             }
 	} catch (e) {
+		self.logger.error('Could not enumerate soundcards, error: ' + e);
 		var namestring = 'No Audio Device Available';
-		cards.push({id: '', name: namestring});
+		cards.push({id: '', hw: 'ALSA', name: namestring});
 	}
 	return cards;
 };
