@@ -10,7 +10,7 @@
 		"icon": "fa-server",
 		"onSave": {
 			"type": "controller",
-			"endpoint": "miscellanea/SnapCast",
+			"endpoint": "miscellanea/snapcast",
 			"method": "updateSnapServer"
 		},
 		"saveButton": {
@@ -48,7 +48,7 @@
 			"label": "TRANSLATE.SNAPCAST.SAMPLE_RATE",
 			"value": {
 				"value": 48000,
-				"label": "48000kHz"
+				"label": "48000Hz"
 			},
 			"options": [],
 			"visibleIf": {
@@ -107,7 +107,7 @@
 		"icon": "fa-music",
 		"onSave": {
 			"type": "controller",
-			"endpoint": "miscellanea/SnapCast",
+			"endpoint": "miscellanea/snapcast",
 			"method": "updateSnapClient"
 		},
 		"saveButton": {
@@ -183,7 +183,7 @@
 		"icon": "fa-play",
 		"onSave": {
 			"type": "controller",
-			"endpoint": "miscellanea/SnapCast",
+			"endpoint": "miscellanea/snapcast",
 			"method": "updateMPDConfig"
 		},
 		"saveButton": {
@@ -209,7 +209,7 @@
 			"label": "TRANSLATE.SNAPCAST.MPD_SAMPLE_RATE",
 			"value": {
 				"value": 48000,
-				"label": "48000kHz"
+				"label": "48000Hz"
 			},
 			"options": [],
 			"visibleIf": {
@@ -275,7 +275,7 @@
 		"icon": "fa-wrench",
 		"onSave": {
 			"type": "controller",
-			"endpoint": "miscellanea/SnapCast",
+			"endpoint": "miscellanea/snapcast",
 			"method": "patchAsoundConfig"
 		},
 		"saveButton": {
@@ -299,7 +299,7 @@
 		"icon": "fa-spotify",
 		"onSave": {
 			"type": "controller",
-			"endpoint": "miscellanea/SnapCast",
+			"endpoint": "miscellanea/snapcast",
 			"method": "updateSnapServerSpotify"
 		},
 		"saveButton": {
@@ -350,7 +350,7 @@
 			"label": "TRANSLATE.SNAPCAST.SAMPLE_RATE",
 			"value": {
 				"value": 48000,
-				"label": "48000kHz"
+				"label": "48000Hz"
 			},
 			"options": [],
 			"visibleIf": {
@@ -464,7 +464,7 @@
 		"icon": "fa-wrench",
 		"onSave": {
 			"type": "controller",
-			"endpoint": "miscellanea/SnapCast",
+			"endpoint": "miscellanea/snapcast",
 			"method": "updateSpotifyImplementation"
 		},
 		"saveButton": {
@@ -488,7 +488,7 @@
 		"icon": "fa-volume-up",
 		"onSave": {
 			"type": "controller",
-			"endpoint": "miscellanea/SnapCast",
+			"endpoint": "miscellanea/snapcast",
 			"method": "updateSnapEnvironment"
 		},
 		"saveButton": {

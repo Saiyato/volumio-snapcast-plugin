@@ -793,7 +793,7 @@ ControllerSnapCast.prototype.patchAsoundConfig = function()
 	})
 	.then(function (copy_new_config) {
 		var edefer = libQ.defer();
-		var cmd = "/bin/echo volumio | /usr/bin/sudo -S /bin/cat /data/plugins/" + pluginCategory + "/" + pluginName + "/asound.section >> /etc/asound.conf";
+		var cmd = "/bin/echo volumio | /usr/bin/sudo -S /bin/cat /data/plugins/" + pluginCategory + "/" + pluginName + "/asound.section >> /etc/asound.conf\nalsactl -L -R restore";
 		fs.writeFile(__dirname + "/" + pluginName.toLowerCase() + "_asound_patch.sh", cmd, 'utf8', function (err) {
 			if (err)
 			{
