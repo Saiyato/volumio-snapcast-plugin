@@ -57,7 +57,6 @@ ControllerSnapCast.prototype.onStop = function() {
 	self.stopService('snapserver')
 	.then(function(stopClient){
 		self.stopService('snapclient');
-		
 		defer.resolve();
 	})
 	.fail(function(e)
@@ -75,7 +74,6 @@ ControllerSnapCast.prototype.stop = function() {
 	self.stopService('snapserver')
 	.then(function(stopClient){
 		self.stopService('snapclient');
-		
 		defer.resolve();
 	})
 	.fail(function(e)
@@ -100,9 +98,9 @@ ControllerSnapCast.prototype.onStart = function() {
 	})
 	.then(function(binding){
 		socket.on('pushState', function (data) {
-             self.updateVolume(data);
-			 self.getSnapServerClientsAndGroups(host);
-        });		
+			self.updateVolume(data);
+			self.getSnapServerClientsAndGroups(host);
+		});
 		defer.resolve();
 	})
 	.fail(function(e)
@@ -237,7 +235,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 			}
 		}
 		uiconf.sections[1].content[2].value = self.config.get('custom_host');
-        uiconf.sections[1].content[3].value = self.config.get('host');
+		uiconf.sections[1].content[3].value = self.config.get('host');
 		
 		for (var n = 0; n < soundcards.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[1].content[4].options', {
@@ -334,7 +332,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 			}
 		}
 		
-		uiconf.sections[4].content[5].value = self.config.get('spotify_channels');		
+		uiconf.sections[4].content[5].value = self.config.get('spotify_channels');
 		uiconf.sections[4].content[6].value = self.config.get('expose_additional_spotify_settings');
 		uiconf.sections[4].content[7].value = self.config.get('librespot_location');
 		uiconf.sections[4].content[8].value = self.config.get('spotify_username');
@@ -358,7 +356,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 		// Patch templates
 		uiconf.sections[5].content[0].value = self.config.get('spotify_implementation');
 		self.logger.info("6/7 template settings loaded");
-		
+
 		// Snap environment info
 		for (var n = 0; n < clients.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[6].content[0].options', {
@@ -370,21 +368,21 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 				value: clients[n].id,
 				label: clients[n].name
 			});
-			
+
 			if(clients[n].id == self.config.get('client_id'))
 			{
 				uiconf.sections[6].content[0].value.value = clients[n].id;
 				uiconf.sections[6].content[0].value.label = clients[n].name;
 			}
 		}
-		
+
 		for (var n = 0; n < streams.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[6].content[3].options', {
 				value: streams[n].id,
 				label: streams[n].id
 			});
 		}
-		
+
 		// Volumio info
 		var soundcard = 'No card match';
 		for(var i = 0; i < soundcards.length; i++) {
@@ -400,14 +398,14 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 		
 		self.logger.info("Populated config screen.");
 		
-        defer.resolve(uiconf);
-    })
-    .fail(function()
-    {
-        defer.reject(new Error());
-    });
+		defer.resolve(uiconf);
+	})
+	.fail(function()
+	{
+		defer.reject(new Error());
+	});
 
-    return defer.promise;
+	return defer.promise;
 };
 
 ControllerSnapCast.prototype.setUIConfig = function(data) {
@@ -646,12 +644,12 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 	var snapMode = (self.config.get('mode') == undefined ? '\\&mode=read' : '\\&mode=' + self.config.get('mode'));
 	var snapFormat = (format == undefined ? '' : '\\&sampleformat=' + format);
 	var snapCodec = (self.config.get('codec') == undefined ? '' : '\\&codec=' + self.config.get('codec'));
-	
+
 	var spotifyStreamName = (self.config.get('spotify_pipe_name') == undefined ? 'VOLUMIO-SPOTIFY' : self.config.get('spotify_pipe_name'));
 	var spotifyFormat = (spotify_format == undefined ? '' : '\\&sampleformat=' + spotify_format);
 	var spotifyDevicename = (self.config.get('spotify_devicename') == undefined ? '' : '\\&devicename=' + self.config.get('spotify_devicename'));
 	var spotifyBitrate = (self.config.get('spotify_bitrate') == undefined ? '' : '\\&bitrate=' + self.config.get('spotify_bitrate'));
-	
+
 	// Omit defaults
 	if(snapFormat == "\\&sampleformat=48000:16:2")
 		snapFormat = '';
@@ -715,10 +713,10 @@ ControllerSnapCast.prototype.generateMPDUpdateScript = function()
 	var defer = libQ.defer();
 	
 	fs.readFile(__dirname + "/templates/mpd_switch_to_fifo.template", 'utf8', function (err, data) {
-            if (err) {
-                defer.reject(new Error(err));
-                //return console.log(err);
-            }
+			if (err) {
+				defer.reject(new Error(err));
+				//return console.log(err);
+			}
 			
 			var alsa = (self.config.get('enable_alsa_mpd') == true ? "yes" : "no");
 			var fifo = (self.config.get('enable_fifo_mpd') == true ? "yes" : "no");
@@ -730,15 +728,15 @@ ControllerSnapCast.prototype.generateMPDUpdateScript = function()
 			var conf5 = conf4.replace(/ENABLE_FIFO/g, fifo);
 			
 			fs.writeFile(__dirname + "/mpd_switch_to_fifo.sh", conf5, 'utf8', function (err) {
-                if (err)
+				if (err)
 				{
 					self.commandRouter.pushConsoleMessage('Could not write the script with error: ' + err);
-                    defer.reject(new Error(err));
+					defer.reject(new Error(err));
 				}
-                else 
+				else 
 					defer.resolve();
-            });
-        });
+			});
+		});
 		
 		return defer.promise;
 }
@@ -832,14 +830,14 @@ ControllerSnapCast.prototype.createAsoundConfig = function(pluginName, replaceme
 		}
 			
 		fs.writeFile(__dirname + "/asound.section", tmpConf, 'utf8', function (err) {
-                if (err)
+				if (err)
 				{
 					self.commandRouter.pushConsoleMessage('Could not write the script with error: ' + err);
-                    defer.reject(new Error(err));
+					defer.reject(new Error(err));
 				}
-                else 
+				else 
 					defer.resolve();
-        });
+		});
 	});
 	
 	return defer.promise;
@@ -956,41 +954,41 @@ ControllerSnapCast.prototype.getAlsaCards = function () {
 	var carddata = fs.readJsonSync(('/volumio/app/plugins/audio_interface/alsa_controller/cards.json'),  'utf8', {throws: false});
 
 	try {
-        var soundCardDir = '/proc/asound/';
-        var soundFiles = fs.readdirSync(soundCardDir);
+		var soundCardDir = '/proc/asound/';
+		var soundFiles = fs.readdirSync(soundCardDir);
 
-        for (var i = 0; i < soundFiles.length; i++) {
+		for (var i = 0; i < soundFiles.length; i++) {
 
-            if (soundFiles[i].indexOf('card') >= 0 && soundFiles[i] != 'cards'){
+			if (soundFiles[i].indexOf('card') >= 0 && soundFiles[i] != 'cards'){
 				var cardnum = soundFiles[i].replace('card', '');
 				var cardinfo = self.getCardinfo(cardnum);
 				var rawname = cardinfo.name;
 				var name = rawname;
 				var hw = fs.readFileSync(soundCardDir + soundFiles[i] + '/id').toString().trim();
 				var id = cardinfo.id;
-                    for (var n = 0; n < carddata.cards.length; n++){
-                        var cardname = carddata.cards[n].name.toString().trim();
-                        if (cardname === rawname){
-                            if(carddata.cards[n].multidevice) {
-                                multi = true;
-                                var card = carddata.cards[n];
-                                for (var j = 0; j < card.devices.length; j++) {
-                                    var subdevice = carddata.cards[n].devices[j].number;
-                                    name = carddata.cards[n].devices[j].prettyname;
-                                    cards.push({id: id + ',' + subdevice, name: name});
-                                }
+					for (var n = 0; n < carddata.cards.length; n++){
+						var cardname = carddata.cards[n].name.toString().trim();
+						if (cardname === rawname){
+							if(carddata.cards[n].multidevice) {
+								multi = true;
+								var card = carddata.cards[n];
+								for (var j = 0; j < card.devices.length; j++) {
+									var subdevice = carddata.cards[n].devices[j].number;
+									name = carddata.cards[n].devices[j].prettyname;
+									cards.push({id: id + ',' + subdevice, name: name});
+								}
 
-                            } else {
-                                multi = false;
-                                name = carddata.cards[n].prettyname;
-                            }
-                        }
-                    } if (!multi){
-                        cards.push({id: id, hw: hw, name: name});
-                    }
-                }
+							} else {
+								multi = false;
+								name = carddata.cards[n].prettyname;
+							}
+						}
+					} if (!multi){
+						cards.push({id: id, hw: hw, name: name});
+					}
+			}
 
-            }
+		}
 	} catch (e) {
 		self.logger.error('Could not enumerate soundcards, error: ' + e);
 		var namestring = 'No Audio Device Available';
@@ -1003,14 +1001,14 @@ ControllerSnapCast.prototype.getCardinfo = function (cardnum) {
 	var self = this;
 	var info = fs.readFileSync('/proc/asound/card'+cardnum+'/pcm0p/info').toString().trim().split('\n');
 
-    for (var e = 0; e < info.length; e++) {
-        if (info[e].indexOf('id') >= 0) {
-        	var infoname = info[e].split(':')[1].replace(' ', '');
-        }
+	for (var e = 0; e < info.length; e++) {
+		if (info[e].indexOf('id') >= 0) {
+			var infoname = info[e].split(':')[1].replace(' ', '');
+		}
 
-    }
-    	var cardinfo = {'id':cardnum,'name':infoname};
-        return cardinfo
+	}
+		var cardinfo = {'id':cardnum,'name':infoname};
+		return cardinfo
 }
 
 ControllerSnapCast.prototype.getVolumioInstances = function () {
