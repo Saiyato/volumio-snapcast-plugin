@@ -662,13 +662,9 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 	
 	var spotifyPipe = '';
 	if(self.config.get('spotify_dedicated_stream'))
-	{
 		spotifyPipe = " -s pipe:///tmp/spotififo?name=" + spotifyStreamName + snapMode + spotifyFormat;
-		if(self.config.get('spotify_implementation') == "librespot")
-		{
-			spotifyPipe = " -s spotify://" + self.config.get('librespot_location') + "?name=" + spotifyStreamName + spotifyDevicename + spotifyBitrate;
-		}
-	}
+	else if(self.config.get('spotify_implementation') == "librespot")
+		spotifyPipe = " -s spotify://" + self.config.get('librespot_location') + "?name=" + spotifyStreamName + spotifyDevicename + spotifyBitrate;
 	
 	self.patchAsoundConfig();
 		
@@ -857,7 +853,7 @@ ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 	}
 	else if (imp == "volspotconnect2")
 	{
-		self.replaceStringInFile("--backend", "--backend pipe --device /tmp/spotififo", "/data/plugins/music_service/volspotconnect2/volspotconnect2.tmpl");
+		self.replaceStringInFile("--backend", "--backend pipe --device " + self.config.get('spotify_pipe'), "/data/plugins/music_service/volspotconnect2/volspotconnect2.tmpl");
 		defer.resolve();
 	}
 

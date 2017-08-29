@@ -1,10 +1,10 @@
 [Unit]
 Description=Creates a fifo buffer for spotify-connect-web/librespot
-Before=snapserver.service
+Before=snapserver.service mpd.service
 
 [Service]
 User=volumio
-ExecStart=/bin/sh -c "rm -f /tmp/spotififo && mkfifo /tmp/spotififo && chmod 664 /tmp/spotififo && chgrp audio /tmp/spotififo"
+ExecStart=/bin/sh -c "rm -f /tmp/snapfifo /tmp/spotififo && mkfifo /tmp/snapfifo /tmp/spotififo && chmod 664 /tmp/snapfifo /tmp/spotififo && chgrp audio /tmp/snapfifo /tmp/spotififo"
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=spotfifo

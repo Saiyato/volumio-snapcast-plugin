@@ -110,7 +110,7 @@ if [ ! -f $INSTALLING ]; then
 	 *) sed -i -- 's|.*type.*alsa.*|&\n\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ enabled\ \ \ \ \ \ \ \ \ "no"|g' /etc/mpd.conf ;;
 	esac
 
-	systemctl enable /data/plugins/miscellanea/SnapCast/spotififo.service
+	systemctl enable /data/plugins/miscellanea/snapcast/spotififo.service
 	systemctl start spotififo.service
 
 	systemctl restart mpd

@@ -330,7 +330,11 @@
 			"type": "text",
 			"doc": "TRANSLATE.SNAPCAST.D_SPOTIFY_PIPE_NAME",
 			"label": "TRANSLATE.SNAPCAST.SPOTIFY_PIPE_NAME",
-			"value": "VOLUMIO-SPOTIFY"
+			"value": "VOLUMIO-SPOTIFY",
+			"visibleIf": {
+				"field": "spotify_dedicated_stream",
+				"value": true
+			}
 		},
 		{
 			"id": "spotify_implementation",
