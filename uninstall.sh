@@ -31,7 +31,8 @@ if [ ! -f $INSTALLING ]; then
 	# Restore /etc/asound.conf
 	sed -i '/#SNAPCAST/,/#ENDOFSNAPCAST/d' /etc/asound.conf
 
-	# Clean-up
+	# Cleanup systemd units
+	systemctl enable /data/plugins/miscellanea/snapcast/spotififo.service
 	rm -rf /lib/systemd/system/spotififo.service
 	rm /tmp/spotififo
 

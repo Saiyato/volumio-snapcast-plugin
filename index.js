@@ -36,11 +36,7 @@ ControllerSnapCast.prototype.onVolumioStart = function()
 	
 	this.configFile = this.commandRouter.pluginManager.getConfigurationFile(this.context, 'config.json');
 	self.getConf(this.configFile);
-	
-	// For debugging purposes
-	//self.logger.info('GPU memory: ' + self.config.get('gpu_mem'));
-	//self.logger.info("Config file: " + this.configFile);
-	
+		
 	return libQ.resolve();	
 };
 
@@ -442,7 +438,7 @@ ControllerSnapCast.prototype.restartService = function (serviceName, boot)
 	var self = this;
 	var defer=libQ.defer();
 
-	if((serviceName == 'snapserver' && self.config.get('server_enabled') == true) || (serviceName == 'snapclient' && self.config.get('client_enabled') == true) || serviceName == 'mpd')
+	if((serviceName == 'snapserver' && self.config.get('server_enabled')) || (serviceName == 'snapclient' && self.config.get('client_enabled')) || serviceName == 'mpd')
 	{
 		var command = "/usr/bin/sudo /bin/systemctl restart " + serviceName;
 		

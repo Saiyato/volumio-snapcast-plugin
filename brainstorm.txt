@@ -21,7 +21,7 @@ sudo apt-get -f install
 http://billauer.co.il/blog/2014/04/alsa-pipe-playback-capture/
 
 asound.conf
-pcm.!default {
+pcm.!default { 
     type plug
     slave.pcm rate48000Hz
 }
