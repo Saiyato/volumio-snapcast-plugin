@@ -737,7 +737,7 @@ ControllerSnapCast.prototype.patchAsoundConfig = function()
 {
 	var self = this;
 	var defer = libQ.defer();
-	var pluginName = "SnapCast";
+	var pluginName = "snapcast";
 	var pluginCategory = "miscellanea";
 	
 	// define the replacement dictionary
@@ -852,7 +852,13 @@ ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 		self.replaceStringInFile("--backend", "--backend pipe --device " + self.config.get('spotify_pipe'), "/data/plugins/music_service/volspotconnect2/volspotconnect2.tmpl");
 		defer.resolve();
 	}
-
+	else if (imp == "spop")
+	{
+		self.replaceStringInFile("alsa", "raw", "/data/plugins/music_service/spop/spop.conf.tmpl");
+		self.replaceStringInFile("${outdev}", self.config.get('spotify_pipe'), "/data/plugins/music_service/spop/spop.conf.tmpl");
+		defer.resolve();
+	}
+	
 	var responseData = {
 	title: 'Configuration required [no translation available]',
 	message: 'Changes have been made to the Spotify implementation template, you need to save the settings in the corresponding plugin again for the changes to take effect. [no translation available]',

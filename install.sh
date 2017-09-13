@@ -121,8 +121,8 @@ if [ ! -f $INSTALLING ]; then
 	sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=Volumio-MPD\&mode=read -s pipe:///tmp/spotififo?name=Volumio-Spotify\&mode=read"|g' /etc/default/snapserver
 	sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS="-d -h 127.0.0.1 -s ALSA"|g' /etc/default/snapclient
 	
-	systemctl restart snapserver
-	systemctl restart snapclient
+	systemctl stop snapserver
+	systemctl stop snapclient
 	
 	rm $INSTALLING
 
