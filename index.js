@@ -667,6 +667,8 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 	// Patch spopd config
 	if(self.config.get('spotify_implementation') == 'spop')
 	{
+		self.replaceStringInFile("output_name", "output_name = " + self.config.get('spotify_pipe'), "/data/plugins/music_service/spop/spop.conf.tmpl");
+		self.replaceStringInFile("output_name", "output_name = " + self.config.get('spotify_pipe'), "/etc/spopd.conf");
 		self.replaceStringInFile("effects", "effects = rate " + self.config.get('spotify_sample_rate'), "/data/plugins/music_service/spop/spop.conf.tmpl");
 		self.replaceStringInFile("effects", "effects = rate " + self.config.get('spotify_sample_rate'), "/etc/spopd.conf");
 	}
@@ -863,6 +865,7 @@ ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 	{
 		self.replaceStringInFile("alsa", "raw", "/data/plugins/music_service/spop/spop.conf.tmpl");
 		self.replaceStringInFile("${outdev}", self.config.get('spotify_pipe') + '\\neffects = rate ' + self.config.get('spotify_sample_rate'), "/data/plugins/music_service/spop/spop.conf.tmpl");
+		self.replaceStringInFile("output_name", "output_name = " + self.config.get('spotify_pipe'), "/data/plugins/music_service/spop/spop.conf.tmpl");
 		self.replaceStringInFile("effects", "effects = rate " + self.config.get('spotify_sample_rate'), "/data/plugins/music_service/spop/spop.conf.tmpl");
 		defer.resolve();
 	}
