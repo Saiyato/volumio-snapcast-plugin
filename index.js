@@ -663,6 +663,13 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 		spotifyPipe = " -s spotify://" + self.config.get('librespot_location') + "?name=" + spotifyStreamName + spotifyDevicename + spotifyBitrate;
 	
 	self.patchAsoundConfig();
+	
+	// Patch spopd config
+	if(self.config.get('spotify_implementation') == 'spop')
+	{
+		self.replaceStringInFile("effects", "effects = rate " + self.config.get('spotify_sample_rate'), "/data/plugins/music_service/spop/spop.conf.tmpl");
+		self.replaceStringInFile("effects", "effects = rate " + self.config.get('spotify_sample_rate'), "/etc/spopd.conf");
+	}
 		
 	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d " + mpdPipe + spotifyPipe + "\"|g' /etc/default/snapserver";
 	
@@ -855,8 +862,8 @@ ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 	else if (imp == "spop")
 	{
 		self.replaceStringInFile("alsa", "raw", "/data/plugins/music_service/spop/spop.conf.tmpl");
-		self.replaceStringInFile("${outdev}", self.config.get('spotify_pipe') + '\\neffects = rate ' + self.config.get('sample_rate'), "/data/plugins/music_service/spop/spop.conf.tmpl");
-		self.replaceStringInFile("effects", "effects = rate " + self.config.get('sample_rate') + " channels " + self.config.get('channels'), "/data/plugins/music_service/spop/spop.conf.tmpl");
+		self.replaceStringInFile("${outdev}", self.config.get('spotify_pipe') + '\\neffects = rate ' + self.config.get('spotify_sample_rate'), "/data/plugins/music_service/spop/spop.conf.tmpl");
+		self.replaceStringInFile("effects", "effects = rate " + self.config.get('spotify_sample_rate'), "/data/plugins/music_service/spop/spop.conf.tmpl");
 		defer.resolve();
 	}
 	

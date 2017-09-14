@@ -119,3 +119,8 @@ LINQ like operations: https://gist.github.com/DanDiplo/30528387da41332ff22b
 sed -i '/#SNAPCAST/,/#ENDOFSNAPCAST/d' /etc/asound.conf
 
 cat /template >> asound.conf
+
+#### SOX
+
+format: https://linux.die.net/man/7/soxformat
+effects: http://rpm.pbone.net/index.php3/stat/45/idpl/23589114/numer/7/nazwa/soxeffect
