@@ -105,3 +105,26 @@ Shows the currently configured sound settings in Volumio.
 
 1. Output device: configured device for output in Volumio (this does not affect the snapclient-service).
 2. Mixer: configured mixer for output in Volumio, not sure how this affects playback yet.
+
+## Troubleshooting
+Any problems with the plugin should be solvable by (re)patching files and saving settings in the corresponding plugins.
+
+###### How should I get started?
+The following step-by-step is just an example, you can configure way more settings if you want to.
+
+1. Install all plugins you wish to use Snapcast, Spotify Connect (e.g. volspotconnect(1|2), Spotify for Volumio 2 (spop) or a stand-alone Librespot library.
+2. If you wish to use Spotify; continue, else you only need to edit the first two sections if you want to deviate from standard behavior. So, assuming you want to use Spotify too, go to the "Spotify integration settings" section:
+
+Decide whether you want a single stream for snapcast or not; single stream means connecting to the server is enough, with dedicated streams you need to switch streams for Spotify (either with an app, or the integrated stream selection in the plugin -> not very visually clarifying). Should you decide to go for a dedicated stream for Spotify you can choose a name for it in the next option.
+
+Let's, for the sake of argument, work with an integrated stream, since I believe this is the most common setup (I might even change that to default in the next version).
+
+The sample rate applies to all implementations, bit depth and channels don't apply to the spop implementation.
+
+Flicking the expose Librespot switch exposes settings which are only needed when you use a stand-alone Librespot library for playback. Note: this is for advanced users only, you ought to know what you are doing if you want this to work.
+
+Once all settings have been updated you can save them.
+
+3. Re-open the snapcast plugin and patch the corresponding plugin template.
+
+4. Now you need to save the settings in the plugin whose template you just patched, this will activate the new configuration and restart any needed binaries.
