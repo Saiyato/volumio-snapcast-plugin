@@ -1,4 +1,4 @@
-# volumio-snapcast-plugin
+î# volumio-snapcast-plugin
 Volumio 2 SnapCast plugin, to easily manage SnapCast functionality
 
 ## Quick start
@@ -18,6 +18,23 @@ You can find the SnapCast project and all the information you need here: https:/
 
 ## More elaborate explanation
 On popular demand hereby a more elaborate description of the settings. They all relate to either snapcast, MPD or any of the Spotify implementations already in place.
+
+#### The multiroom environment
+The image below shows how a multiroom environment using SnapCast could look like. The main device, let's call that the server, will be hosting the audio chunks to all clients in the network. All music services on the server will have a fifo or pipe output defined, meaning they will not output to ALSA anymore.
+
+The flow of the audio is as follows:
+Audio service -> FIFO/PIPE -> the SnapServer component will read the FIFO file (maybe even resample) and serve it -> The SnapClient component is able to receive the audio chunks and send them to an ALSA device -> ALSA -> Amplifier -> your speakers
+
+The clients, either on the server or on another device, will be connected to the server (and the desired stream, because the server can host multiple streams). They can be configured in a hybrid way, so you can use them as SnapClient or stand-alone instance of Volumio, depening on your moods and desires. 
+
+How do you configure a hybrid device?
+
+1. Install the SnapCast plugin 
+2. Disable the SnapServer on the hybrid device
+3. Connect to your SnapServer (on the other device)
+4. Configure all audio services to output to ALSA (NOTE: if you are not using a mix device you might need to wait a few seconds if you switch between SnapClient and another audio service)
+
+![Alt text](/images/snapcast_flow.png?raw=true "Snapcast environment overview")
 
 ###### SnapServer settings
 This section configure the server-part behavior, disabling the server will stop the snapserver-service entirely.
@@ -112,12 +129,12 @@ Any problems with the plugin should be solvable by (re)patching files and saving
 ###### How should I get started?
 The following step-by-step is just an example, you can configure way more settings if you want to.
 
-1. Install all plugins you wish to use Snapcast, Spotify Connect (e.g. volspotconnect(1|2), Spotify for Volumio 2 (spop) or a stand-alone Librespot library.
+1. Install all plugins you wish to use; Snapcast, Spotify Connect (e.g. volspotconnect(1|2), Spotify for Volumio 2 (spop), a stand-alone Librespot library, Qobuz, Youtube etc...
 2. If you wish to use Spotify; continue, else you only need to edit the first two sections if you want to deviate from standard behavior. So, assuming you want to use Spotify too, go to the "Spotify integration settings" section:
 
 Decide whether you want a single stream for snapcast or not; single stream means connecting to the server is enough, with dedicated streams you need to switch streams for Spotify (either with an app, or the integrated stream selection in the plugin -> not very visually clarifying). Should you decide to go for a dedicated stream for Spotify you can choose a name for it in the next option.
 
-Let's, for the sake of argument, work with an integrated stream, since I believe this is the most common setup (I might even change that to default in the next version).
+Let's, for the sake of argument, work with an integrated stream, since I believe this is the most common setup (this is now the default).
 
 The sample rate applies to all implementations, bit depth and channels don't apply to the spop implementation.
 
