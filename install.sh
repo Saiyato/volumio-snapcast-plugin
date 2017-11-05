@@ -5,6 +5,7 @@ INSTALLING="/home/volumio/snapcast-plugin.installing"
 if [ ! -f $INSTALLING ]; then
 
 	touch $INSTALLING
+	apt-get update
 
 	# Download latest SnapCast packages
 	mkdir /home/volumio/snapcast
