@@ -47,7 +47,7 @@
 		"ASOUND_CONF":"ALSA configuration file",
 		"D_ASOUND_CONF":"Location of the global ALSA configuration file.",
 	"SPOTIFY":"Spotify integration settings",
-	"D_SPOTIFY":"Configure the Spotify plugin settings to enabled output to a named pipe, enabling synchronized playback.",
+	"D_SPOTIFY":"Configure the Spotify plugin settings to enabled output to a named pipe, enabling synchronized playback. Please bear in mind that changing these settings are not in effect immediately, you'll need to restart whatever implementation you've chosen afterwards.",
 		"SPOTIFY_DEDICATED_STREAM":"Dedicated stream for Spotify",
 		"D_SPOTIFY_DEDICATED_STREAM":"This en- or disables a dedicated stream for the Spotify implementation.",
 		"SPOTIFY_PIPE_NAME":"Name of the Spotify stream",

@@ -73,7 +73,7 @@
   },
   "spotify_dedicated_stream": {
     "type": "boolean",
-    "value": true
+    "value": false
   },
   "spotify_pipe": {
     "type": "string",

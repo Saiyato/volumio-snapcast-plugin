@@ -87,6 +87,8 @@ ControllerSnapCast.prototype.onStart = function() {
 	var host = self.config.get('volumio_host');
 		if(self.config.get('custom_host'))
 			host = self.config.get('host');
+		
+	self.getSnapServerClientsAndGroups(host);
 
 	self.restartService('snapserver', true)
 	.then(function(startClient){
@@ -95,7 +97,6 @@ ControllerSnapCast.prototype.onStart = function() {
 	.then(function(binding){
 		socket.on('pushState', function (data) {
 			self.updateVolume(data);
-			self.getSnapServerClientsAndGroups(host);
 		});
 		defer.resolve();
 	})
@@ -354,6 +355,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 		self.logger.info("6/7 template settings loaded");
 
 		// Snap environment info
+		self.configManager.pushUIConfigParam(uiconf, 'sections[6].content[0].options', {value: '', label: 'Disable volume update'});			
 		for (var n = 0; n < clients.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[6].content[0].options', {
 				value: clients[n].id,
@@ -369,6 +371,11 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 			{
 				uiconf.sections[6].content[0].value.value = clients[n].id;
 				uiconf.sections[6].content[0].value.label = clients[n].name;
+			}
+			else if (self.config.get('client_id') == '')
+			{
+				uiconf.sections[6].content[0].value.value = '';
+				uiconf.sections[6].content[0].value.label = 'Disable volume update';
 			}
 		}
 
@@ -663,6 +670,17 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 		spotifyPipe = " -s spotify://" + self.config.get('librespot_location') + "?name=" + spotifyStreamName + spotifyDevicename + spotifyBitrate;
 	
 	self.patchAsoundConfig();
+	
+	// Patch spopd config
+	if(self.config.get('spotify_implementation') == 'spop')
+	{
+		self.replaceStringInFile("output_type", "output_type = raw", "/data/plugins/music_service/spop/spop.conf.tmpl");
+		self.replaceStringInFile("output_type", "output_type = raw", "/etc/spopd.conf");
+		self.replaceStringInFile("output_name", "output_name = " + self.config.get('spotify_pipe'), "/data/plugins/music_service/spop/spop.conf.tmpl");
+		self.replaceStringInFile("output_name", "output_name = " + self.config.get('spotify_pipe'), "/etc/spopd.conf");		
+		self.replaceStringInFile("effects", "effects = rate " + self.config.get('spotify_sample_rate') + "; channels " + self.config.get('spotify_channels'), "/data/plugins/music_service/spop/spop.conf.tmpl");
+		self.replaceStringInFile("effects", "effects = rate " + self.config.get('spotify_sample_rate') + "; channels " + self.config.get('spotify_channels'), "/etc/spopd.conf");
+	}
 		
 	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d " + mpdPipe + spotifyPipe + "\"|g' /etc/default/snapserver";
 	
@@ -855,7 +873,10 @@ ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 	else if (imp == "spop")
 	{
 		self.replaceStringInFile("alsa", "raw", "/data/plugins/music_service/spop/spop.conf.tmpl");
-		self.replaceStringInFile("${outdev}", self.config.get('spotify_pipe'), "/data/plugins/music_service/spop/spop.conf.tmpl");
+		self.replaceStringInFile("${outdev}", self.config.get('spotify_pipe') + '\\neffects = rate ' + self.config.get('spotify_sample_rate'), "/data/plugins/music_service/spop/spop.conf.tmpl");
+		self.replaceStringInFile("output_type", "output_type = raw", "/data/plugins/music_service/spop/spop.conf.tmpl");
+		self.replaceStringInFile("output_name", "output_name = " + self.config.get('spotify_pipe'), "/data/plugins/music_service/spop/spop.conf.tmpl");		
+		self.replaceStringInFile("effects", "effects = rate " + self.config.get('spotify_sample_rate') + "; channels " + self.config.get('spotify_channels'), "/data/plugins/music_service/spop/spop.conf.tmpl");
 		defer.resolve();
 	}
 	
@@ -1005,8 +1026,8 @@ ControllerSnapCast.prototype.getCardinfo = function (cardnum) {
 		}
 
 	}
-		var cardinfo = {'id':cardnum,'name':infoname};
-		return cardinfo
+	var cardinfo = {'id':cardnum,'name':infoname};
+	return cardinfo;
 }
 
 ControllerSnapCast.prototype.getVolumioInstances = function () {
@@ -1029,13 +1050,17 @@ ControllerSnapCast.prototype.getSnapServerStatus = function (host, callback) {
 			var messages = message.toString().split(/\r?\n/);
 			messages = messages.filter(function(n){ return n != "" });
 			
-			for (var msg in messages){
-				var currMsg = JSON.parse(messages[msg]);
-				
-				if(currMsg.id == 1)
+			for (var msg in messages)
+			{
+				if( self.isValidJSON(messages[msg]))
 				{
-					return callback(currMsg);
-					break;
+					var currMsg = JSON.parse(messages[msg]);
+					
+					if(currMsg.id == 1)
+					{						
+						return callback(currMsg);
+						break;
+					}
 				}
 			}
 		}
@@ -1049,7 +1074,7 @@ ControllerSnapCast.prototype.getSnapServerClientsAndGroups = function (host)
 		clients = []; // Clear the array before filling it (again)
 		groups = [];
 		streams = [];
-		if(statusMsg != undefined)
+		if(statusMsg != undefined && self.isValidJSON(statusMsg))
 		{
 			for (var group in statusMsg.result.server.groups)
 			{
@@ -1077,7 +1102,7 @@ ControllerSnapCast.prototype.setClientStream = function (host, client_id, stream
 {
 	var self = this;	
 	self.getSnapServerStatus(host, function(statusMsg) {
-		if(statusMsg != undefined)
+		if(statusMsg != undefined && self.isValidJSON(statusMsg))
 		{
 			var group_id;
 			for (var group in statusMsg.result.server.groups)
@@ -1107,8 +1132,8 @@ ControllerSnapCast.prototype.updateVolume = function (data) {
 	
 	if(data.volume != volume && self.config.get('client_enabled') && (self.config.get('client_id') != undefined && self.config.get('client_id') != ''))
 	{
+		//self.logger.info('Volume change detected! New volume: ' + data.volume + ' was: ' + volume);
 		volume = data.volume;
-		self.logger.info('Volume change detected! New volume: ' + volume);
 		
 		var host = self.config.get('volumio_host');
 		if(self.config.get('custom_host'))
@@ -1116,14 +1141,28 @@ ControllerSnapCast.prototype.updateVolume = function (data) {
 		
 		// Propagate new volume to SnapCast
 		JsonSocket.sendSingleMessageAndReceive(1705, host, {"id":8,"jsonrpc":"2.0","method":"Client.SetVolume","params":{"id": self.config.get('client_id'),"volume":{"muted":data.mute,"percent":data.volume}}}, function(err, message) {
-			 //self.logger.info('Message sent, awaiting response...');
-			 if (err) {
-				 //Something went wrong
+			 if (err)
 				 self.logger.info('An error occurred: ' + err);
-			 }
 			 //self.logger.info('Server said: ###' + message + '###');
 		 });
+		 
+		 
 	}
 	
 	return libQ.resolve();
+}
+
+ControllerSnapCast.prototype.isValidJSON = function (str) 
+{
+	var self = this;
+    try 
+	{
+        JSON.parse(JSON.stringify(str));
+    } 
+	catch (e) 
+	{
+		self.logger.error('Could not parse JSON, error: ' + e + '\nMalformed JSON msg: ' + JSON.stringify(str));
+        return false;
+    }
+    return true;
 }

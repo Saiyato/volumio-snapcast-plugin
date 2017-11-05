@@ -322,7 +322,7 @@
 			"element": "switch",
 			"doc": "TRANSLATE.SNAPCAST.D_SPOTIFY_DEDICATED_STREAM",
 			"label": "TRANSLATE.SNAPCAST.SPOTIFY_DEDICATED_STREAM",
-			"value": true
+			"value": false
 		},
 		{
 			"id": "spotify_pipe_name",
