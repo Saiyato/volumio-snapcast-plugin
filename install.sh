@@ -17,7 +17,7 @@ if [ ! -f $INSTALLING ]; then
 
 	# Install packages (server and client) and dependencies
 	for f in /home/volumio/snapcast/snap*.deb; do dpkg -i "$f"; done
-	apt-get -f install
+	apt-get -f -y install
 
 	# To execute the --version command
 	ln -fs /usr/bin/snapclient /usr/sbin/snapclient
