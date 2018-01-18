@@ -15,6 +15,8 @@ var clients = [];
 var groups = [];
 var streams = [];
 
+var NDJSON = true;
+
 // Define the ControllerSnapCast class
 module.exports = ControllerSnapCast;
 
@@ -867,7 +869,7 @@ ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 	}
 	else if (imp == "volspotconnect2")
 	{
-		self.replaceStringInFile("--backend", "--backend pipe --device " + self.config.get('spotify_pipe'), "/data/plugins/music_service/volspotconnect2/volspotconnect2.tmpl");
+		self.replaceStringInFile("--backend", "--backend pipe --device " + self.config.get('spotify_pipe') + " --disable-audio-cache --onstart ./onstart1.sh", "/data/plugins/music_service/volspotconnect2/volspotconnect2.tmpl");
 		defer.resolve();
 	}
 	else if (imp == "spop")
@@ -1039,7 +1041,7 @@ ControllerSnapCast.prototype.getVolumioInstances = function () {
 
 ControllerSnapCast.prototype.getSnapServerStatus = function (host, callback) {
 	var self = this;
-	JsonSocket.sendSingleMessageAndReceive(1705, host, {"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"}, function(err, message) {
+	JsonSocket.sendSingleMessageAndReceive(1705, host, NDJSON, {"id":1,"jsonrpc":"2.0","method":"Server.GetStatus"}, function(err, message) {
 		if (err) {
 			self.logger.info('An error occurred: ' + err);
 		}
@@ -1114,7 +1116,7 @@ ControllerSnapCast.prototype.setClientStream = function (host, client_id, stream
 				}
 			}
 			
-			JsonSocket.sendSingleMessageAndReceive(1705, host, {"id":4,"jsonrpc":"2.0","method":"Group.SetStream","params":{"id": group_id, "stream_id":stream_id}}, function(err, message) {
+			JsonSocket.sendSingleMessageAndReceive(1705, host, NDJSON, {"id":4,"jsonrpc":"2.0","method":"Group.SetStream","params":{"id": group_id, "stream_id":stream_id}}, function(err, message) {
 				 if (err) {
 					 self.logger.info('An error occurred: ' + err);
 				 }
@@ -1140,7 +1142,7 @@ ControllerSnapCast.prototype.updateVolume = function (data) {
 			host = self.config.get('host');
 		
 		// Propagate new volume to SnapCast
-		JsonSocket.sendSingleMessageAndReceive(1705, host, {"id":8,"jsonrpc":"2.0","method":"Client.SetVolume","params":{"id": self.config.get('client_id'),"volume":{"muted":data.mute,"percent":data.volume}}}, function(err, message) {
+		JsonSocket.sendSingleMessageAndReceive(1705, host, NDJSON, {"id":8,"jsonrpc":"2.0","method":"Client.SetVolume","params":{"id": self.config.get('client_id'),"volume":{"muted":data.mute,"percent":data.volume}}}, function(err, message) {
 			 if (err)
 				 self.logger.info('An error occurred: ' + err);
 			 //self.logger.info('Server said: ###' + message + '###');
