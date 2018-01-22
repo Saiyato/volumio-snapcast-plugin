@@ -47,6 +47,14 @@
     "type": "string",
     "value": "ALSA"
   },
+  "custom_host_id": {
+    "type": "boolean",
+    "value": false
+  },
+  "host_id": {
+    "type": "string",
+    "value": ""
+  },
   "patch_mpd_conf": {
     "type": "boolean",
     "value": true
