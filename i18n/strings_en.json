@@ -27,6 +27,11 @@
 		"D_HOSTNAME":"Snapcast server name or IP.",
 		"SOUNDCARD":"Soundcard to use for playback",
 		"D_SOUNDCARD":"The soundcard you wish to use for the SnapCast client output.",
+		"CUSTOMHOSTID":"Define a custom host ID",
+		"D_CUSTOMHOST":"Define a custom Snapcast Client HostID.",
+		"HOSTID":"Snapcast Client HostID",
+		"D_HOSTID":"Snapcast clisnet HostID.",
+
 	"MPD":"MPD settings",
 	"D_MPD":"Configure MPD output for synchronized playback and set the correct sound quality. 48kHz @ 16 bits over two channels is advised and allows for flawless playback.",
 		"PATCH_MPD_CONF":"Patch mpd.conf",

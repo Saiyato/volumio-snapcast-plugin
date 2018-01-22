@@ -116,7 +116,10 @@
 			"volumio_host",
 			"custom_host",
 			"host",
-			"soundcard"]
+			"soundcard",
+			"custom_host_id",
+			"host_id"
+			]
 		},
 		"content": [{
 			"id": "client_enabled",
@@ -173,7 +176,27 @@
 				"field": "client_enabled",
 				"value": true
 			}
-		}]
+		},
+		{
+			"id": "custom_host_id",
+			"element": "switch",
+			"doc": "TRANSLATE.SNAPCAST.D_CUSTOMHOSTID",
+			"label": "TRANSLATE.SNAPCAST.CUSTOMHOSTID",
+			"value": false
+		},
+		{
+			"id": "host_id",
+			"element": "input",
+			"type": "text",
+			"doc": "TRANSLATE.SNAPCAST.D_HOSTID",
+			"label": "TRANSLATE.SNAPCAST.HOSTID",
+			"value": "",
+			"visibleIf": {
+				"field": "custom_host_id",
+				"value": true
+			}
+		}
+		]
 	},
 	{
 		"id": "section_mpdconf",

@@ -248,6 +248,8 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 				uiconf.sections[1].content[4].value.label = soundcards[n].name;
 			}
 		}
+		uiconf.sections[1].content[5].value = self.config.get('custom_host_id');
+		uiconf.sections[1].content[6].value = self.config.get('host_id');
 		self.logger.info("2/7 client settings loaded");
 		
 		// MPD settings
@@ -584,6 +586,8 @@ ControllerSnapCast.prototype.updateSnapClient = function (data)
 	self.config.set('custom_host', data['custom_host']);
 	self.config.set('host', data['host']);
 	self.config.set('soundcard', data['soundcard'].value);
+	self.config.set('custom_host_id', data['custom_host_id']);
+	self.config.set('host_id', data['host_id']);
 	
 	self.logger.info("Successfully updated sound configuration");
 	
@@ -706,8 +710,9 @@ ControllerSnapCast.prototype.updateSnapClientConfig = function (data)
 		streamHost = (data['host'] == undefined ? 'localhost' : data['host']);
 	
 	var snapSoundCard = (data['soundcard'] == undefined ? '1' : data['soundcard'].value);
+	var hostID = (data['host_id'] == undefined ? '' : ' --hostID ' + data['host_id']);
 	
-	var	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS=\"-d -h " + streamHost + " -s " + snapSoundCard + "\"|g' /etc/default/snapclient";
+	var	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS=\"-d -h " + streamHost + " -s " + snapSoundCard + hostID + "\"|g' /etc/default/snapclient";
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)
