@@ -145,3 +145,22 @@ Once all settings have been updated you can save them.
 3. Re-open the snapcast plugin and patch the corresponding plugin template.
 
 4. Now you need to save the settings in the plugin whose template you just patched, this will activate the new configuration and restart any needed binaries.
+
+## Contributing
+
+#### Packaging this project
+
+```
+zip -r volumio-snapcast-plugin.zip \
+    UIConfig.json \
+    config.json \
+    index.js \
+    node_modules \
+    package.json \
+    spotififo.service \
+    uninstall.sh \
+    i18n \
+    install.sh \
+    options \
+    templates
+```

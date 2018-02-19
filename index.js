@@ -250,8 +250,13 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 				uiconf.sections[1].content[4].value.label = soundcards[n].name;
 			}
 		}
+<<<<<<< HEAD
 		
 		uiconf.sections[1].content[5].value = self.config.get('client_cli');
+=======
+		uiconf.sections[1].content[5].value = self.config.get('custom_host_id');
+		uiconf.sections[1].content[6].value = self.config.get('host_id');
+>>>>>>> 1365a4e589272a59248dd46ce64a291f163d640d
 		self.logger.info("2/7 client settings loaded");
 		
 		// MPD settings
@@ -589,7 +594,12 @@ ControllerSnapCast.prototype.updateSnapClient = function (data)
 	self.config.set('custom_host', data['custom_host']);
 	self.config.set('host', data['host']);
 	self.config.set('soundcard', data['soundcard'].value);
+<<<<<<< HEAD
 	self.config.set('client_cli', data['client_cli']);
+=======
+	self.config.set('custom_host_id', data['custom_host_id']);
+	self.config.set('host_id', data['host_id']);
+>>>>>>> 1365a4e589272a59248dd46ce64a291f163d640d
 	
 	self.logger.info("Successfully updated sound configuration");
 	
@@ -713,6 +723,7 @@ ControllerSnapCast.prototype.updateSnapClientConfig = function (data)
 	if(data['custom_host'] == true)
 		streamHost = (data['host'] == undefined ? 'localhost' : data['host']);
 	
+<<<<<<< HEAD
 	var snapSoundCard = " -s ";
 	if(data['soundcard'] != undefined)
 		if(data['soundcard'].value != "")
@@ -725,6 +736,12 @@ ControllerSnapCast.prototype.updateSnapClientConfig = function (data)
 	var cli_commands = (self.config.get('client_cli') == undefined ? '' : self.config.get('client_cli'));
 	
 	var	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS=\"-d -h " + streamHost + snapSoundCard + cli_commands + "\"|g' /etc/default/snapclient";
+=======
+	var snapSoundCard = (data['soundcard'] == undefined ? '1' : data['soundcard'].value);
+	var hostID = (data['host_id'] == undefined ? '' : ' --hostID ' + data['host_id']);
+	
+	var	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS=\"-d -h " + streamHost + " -s " + snapSoundCard + hostID + "\"|g' /etc/default/snapclient";
+>>>>>>> 1365a4e589272a59248dd46ce64a291f163d640d
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)
