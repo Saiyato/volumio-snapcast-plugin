@@ -26,18 +26,14 @@
 		"HOSTNAME":"SnapCast host (name/IP)",
 		"D_HOSTNAME":"Snapcast server name or IP.",
 		"SOUNDCARD":"Soundcard to use for playback",
-		"D_SOUNDCARD":"The soundcard you wish to use for the SnapCast client output.",
-<<<<<<< HEAD
+		"D_SOUNDCARD":"The soundcard you wish to use for the SnapCast client output.",	
+		"CUSTOMHOSTID":"Define a custom host ID",
+		"D_CUSTOMHOST":"Define a custom SnapCast client host ID.",
+		"HOSTID":"SnapCast client host ID",
+		"D_HOSTID":"Define a SnapCast host by filling in its ID.",
 	"CLI": "Additional CLI commands",
 	"D_CLI": "This field allows you to add CLI commands to your setup.<br />You can find the commands here: https://github.com/badaix/snapcast#Configuration",
 	"DD_CLI": "The CLI commands will be appended to the config. In the case of leading spaces, prefix the string with a backslash (\\).",
-=======
-		"CUSTOMHOSTID":"Define a custom host ID",
-		"D_CUSTOMHOST":"Define a custom Snapcast Client HostID.",
-		"HOSTID":"Snapcast Client HostID",
-		"D_HOSTID":"Snapcast clisnet HostID.",
-
->>>>>>> 1365a4e589272a59248dd46ce64a291f163d640d
 	"MPD":"MPD settings",
 	"D_MPD":"Configure MPD output for synchronized playback and set the correct sound quality. 48kHz @ 16 bits over two channels is advised and allows for flawless playback.",
 		"PATCH_MPD_CONF":"Patch mpd.conf",

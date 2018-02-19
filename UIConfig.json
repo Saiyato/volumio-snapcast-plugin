@@ -134,14 +134,11 @@
 			"volumio_host",
 			"custom_host",
 			"host",
-			"soundcard",
-<<<<<<< HEAD
-			"client_cli"]
-=======
+			"soundcard",			
 			"custom_host_id",
-			"host_id"
+			"host_id",
+			"client_cli"
 			]
->>>>>>> 1365a4e589272a59248dd46ce64a291f163d640d
 		},
 		"content": [{
 			"id": "client_enabled",
@@ -200,20 +197,6 @@
 			}
 		},
 		{
-<<<<<<< HEAD
-			"id": "client_cli",
-			"element": "input",
-			"type": "text",
-			"doc": "TRANSLATE.SNAPCAST.D_CLI",
-			"label": "TRANSLATE.SNAPCAST.CLI",
-			"description": "TRANSLATE.SNAPCAST.DD_CLI",
-			"value": "",
-			"visibleIf": {
-				"field": "client_enabled",
-				"value": true
-			}
-		}]
-=======
 			"id": "custom_host_id",
 			"element": "switch",
 			"doc": "TRANSLATE.SNAPCAST.D_CUSTOMHOSTID",
@@ -231,9 +214,20 @@
 				"field": "custom_host_id",
 				"value": true
 			}
-		}
-		]
->>>>>>> 1365a4e589272a59248dd46ce64a291f163d640d
+		},
+		{
+			"id": "client_cli",
+			"element": "input",
+			"type": "text",
+			"doc": "TRANSLATE.SNAPCAST.D_CLI",
+			"label": "TRANSLATE.SNAPCAST.CLI",
+			"description": "TRANSLATE.SNAPCAST.DD_CLI",
+			"value": "",
+			"visibleIf": {
+				"field": "client_enabled",
+				"value": true
+			}
+		}]
 	},
 	{
 		"id": "section_mpdconf",

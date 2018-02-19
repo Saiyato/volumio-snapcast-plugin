@@ -50,17 +50,17 @@
   "soundcard": {
     "type": "string",
     "value": "ALSA"
-  },
-<<<<<<< HEAD
-  "client_cli": {
-=======
+  },  
   "custom_host_id": {
     "type": "boolean",
     "value": false
   },
   "host_id": {
->>>>>>> 1365a4e589272a59248dd46ce64a291f163d640d
     "type": "string",
+    "value": ""
+  },
+  "client_cli": {
+	"type": "string",
     "value": ""
   },
   "patch_mpd_conf": {
