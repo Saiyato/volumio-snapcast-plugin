@@ -727,7 +727,10 @@ ControllerSnapCast.prototype.updateSnapClientConfig = function (data)
 		snapSoundCard = " -s 0";
 	
 	var cli_commands = (self.config.get('client_cli') == undefined ? '' : self.config.get('client_cli'));
-	var hostID = (data['host_id'] == undefined ? "" : " --hostID " + data['host_id']);
+	
+	var hostID = "";
+	if(data['custom_host_id'] && data['host_id'] != undefined && data['host_id'] != "")
+		hostID = " --hostID " + data['host_id'];
 	
 	var	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS=\"-d" + streamHost + snapSoundCard + hostID + cli_commands +"\"|g' /etc/default/snapclient";
 	
