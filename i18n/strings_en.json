@@ -1,8 +1,8 @@
 {
 	"SNAPCAST":{
 	"SNAPCASTCONF":"SnapCast Configuration",
-	"SERVER":"SnapServer settings",
-	"D_SERVER":"Configure the basic server settings; such as sound quality, codec and stream name for the MPD playback.",
+	"SERVER":"SnapServer settings",	
+	"D_SERVER":"Configure the basic server settings; such as sound quality, codec and stream name for the MPD playback.<br />Note: if defaults are not changed, no CLI comments are added for those settings.",	
 		"SERVER_ENABLED":"Enable SnapServer",
 		"D_SERVER_ENABLED":"En- or disable the SnapServer",
 		"MAIN_PIPE_NAME":"Name of the main stream",
@@ -27,6 +27,9 @@
 		"D_HOSTNAME":"Snapcast server name or IP.",
 		"SOUNDCARD":"Soundcard to use for playback",
 		"D_SOUNDCARD":"The soundcard you wish to use for the SnapCast client output.",
+	"CLI": "Additional CLI commands",
+	"D_CLI": "This field allows you to add CLI commands to your setup.<br />You can find the commands here: https://github.com/badaix/snapcast#Configuration",
+	"DD_CLI": "The CLI commands will be appended to the config. In the case of leading spaces, prefix the string with a backslash (\\).",
 	"MPD":"MPD settings",
 	"D_MPD":"Configure MPD output for synchronized playback and set the correct sound quality. 48kHz @ 16 bits over two channels is advised and allows for flawless playback.",
 		"PATCH_MPD_CONF":"Patch mpd.conf",

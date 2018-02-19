@@ -20,7 +20,8 @@
 			"sample_rate",
 			"bit_depth",
 			"channels",
-			"codec"]
+			"codec",
+			"server_cli"]
 		},
 		"content": [{
 			"id": "server_enabled",
@@ -46,6 +47,7 @@
 			"element": "select",
 			"doc": "TRANSLATE.SNAPCAST.D_SAMPLE_RATE",
 			"label": "TRANSLATE.SNAPCAST.SAMPLE_RATE",
+			"description": "Default = 48000Hz",
 			"value": {
 				"value": 48000,
 				"label": "48000Hz"
@@ -61,6 +63,7 @@
 			"element": "select",
 			"doc": "TRANSLATE.SNAPCAST.D_BIT_DEPTH",
 			"label": "TRANSLATE.SNAPCAST.BIT_DEPTH",
+			"description": "Default = 16 bits",
 			"value": {
 				"value": 16,
 				"label": "16 bits"
@@ -77,6 +80,7 @@
 			"element": "input",
 			"doc": "TRANSLATE.SNAPCAST.D_CHANNELS",
 			"label": "TRANSLATE.SNAPCAST.CHANNELS",
+			"description": "Default = stereo = 2 channels",
 			"value": "2",
 			"visibleIf": {
 				"field": "server_enabled",
@@ -88,11 +92,25 @@
 			"element": "select",
 			"doc": "TRANSLATE.SNAPCAST.D_CODEC",
 			"label": "TRANSLATE.SNAPCAST.CODEC",
+			"description": "Default = FLAC",
 			"value": {
 				"value": "flac",
 				"label": "Flac (lossless compressed [default])"
 			},
 			"options": [],
+			"visibleIf": {
+				"field": "server_enabled",
+				"value": true
+			}
+		},
+		{
+			"id": "server_cli",
+			"element": "input",
+			"type": "text",
+			"doc": "TRANSLATE.SNAPCAST.D_CLI",
+			"label": "TRANSLATE.SNAPCAST.CLI",
+			"description": "TRANSLATE.SNAPCAST.DD_CLI",
+			"value": "",
 			"visibleIf": {
 				"field": "server_enabled",
 				"value": true
@@ -116,7 +134,8 @@
 			"volumio_host",
 			"custom_host",
 			"host",
-			"soundcard"]
+			"soundcard",
+			"client_cli"]
 		},
 		"content": [{
 			"id": "client_enabled",
@@ -169,6 +188,19 @@
 				"label": "Audio Jack"
 			},
 			"options": [],
+			"visibleIf": {
+				"field": "client_enabled",
+				"value": true
+			}
+		},
+		{
+			"id": "client_cli",
+			"element": "input",
+			"type": "text",
+			"doc": "TRANSLATE.SNAPCAST.D_CLI",
+			"label": "TRANSLATE.SNAPCAST.CLI",
+			"description": "TRANSLATE.SNAPCAST.DD_CLI",
+			"value": "",
 			"visibleIf": {
 				"field": "client_enabled",
 				"value": true

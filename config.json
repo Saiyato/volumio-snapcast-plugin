@@ -23,6 +23,10 @@
     "type": "string",
     "value": "2"
   },
+  "server_cli": {
+    "type": "string",
+    "value": ""
+  },
   "client_enabled": {
     "type": "boolean",
     "value": true
@@ -46,6 +50,10 @@
   "soundcard": {
     "type": "string",
     "value": "ALSA"
+  },
+  "client_cli": {
+    "type": "string",
+    "value": ""
   },
   "patch_mpd_conf": {
     "type": "boolean",

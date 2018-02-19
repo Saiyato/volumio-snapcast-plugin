@@ -207,6 +207,8 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 				uiconf.sections[0].content[5].value.label = codecdata.codecs[n].name;
 			}
 		}
+		
+		uiconf.sections[0].content[6].value = self.config.get('server_cli');
 		self.logger.info("1/7 server settings loaded");
 		
 		// Client settings
@@ -248,6 +250,8 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 				uiconf.sections[1].content[4].value.label = soundcards[n].name;
 			}
 		}
+		
+		uiconf.sections[1].content[5].value = self.config.get('client_cli');
 		self.logger.info("2/7 client settings loaded");
 		
 		// MPD settings
@@ -517,6 +521,7 @@ ControllerSnapCast.prototype.updateSnapServer = function (data)
 	self.config.set('bit_depth', data['bit_depth'].value);
 	self.config.set('channels', data['channels']);
 	self.config.set('codec', data['codec'].value);
+	self.config.set('server_cli', data['server_cli']);
 	
 	self.logger.info("Successfully updated snapserver configuration");
 	
@@ -584,6 +589,7 @@ ControllerSnapCast.prototype.updateSnapClient = function (data)
 	self.config.set('custom_host', data['custom_host']);
 	self.config.set('host', data['host']);
 	self.config.set('soundcard', data['soundcard'].value);
+	self.config.set('client_cli', data['client_cli']);
 	
 	self.logger.info("Successfully updated sound configuration");
 	
@@ -654,6 +660,8 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 	var spotifyFormat = (spotify_format == undefined ? '' : '\\&sampleformat=' + spotify_format);
 	var spotifyDevicename = (self.config.get('spotify_devicename') == undefined ? '' : '\\&devicename=' + self.config.get('spotify_devicename'));
 	var spotifyBitrate = (self.config.get('spotify_bitrate') == undefined ? '' : '\\&bitrate=' + self.config.get('spotify_bitrate'));
+	
+	var cli_commands = (self.config.get('server_cli') == undefined ? '' : self.config.get('server_cli'));
 
 	// Omit defaults
 	if(snapFormat == "\\&sampleformat=48000:16:2")
@@ -684,7 +692,7 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 		self.replaceStringInFile("effects", "effects = rate " + self.config.get('spotify_sample_rate') + "; channels " + self.config.get('spotify_channels'), "/etc/spopd.conf");
 	}
 		
-	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d " + mpdPipe + spotifyPipe + "\"|g' /etc/default/snapserver";
+	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d " + mpdPipe + spotifyPipe + cli_commands + "\"|g' /etc/default/snapserver";
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)
@@ -705,9 +713,18 @@ ControllerSnapCast.prototype.updateSnapClientConfig = function (data)
 	if(data['custom_host'] == true)
 		streamHost = (data['host'] == undefined ? 'localhost' : data['host']);
 	
-	var snapSoundCard = (data['soundcard'] == undefined ? '1' : data['soundcard'].value);
+	var snapSoundCard = " -s ";
+	if(data['soundcard'] != undefined)
+		if(data['soundcard'].value != "")
+			snapSoundCard += data['soundcard'].value;
+		else
+			snapSoundCard = "";
+	else
+		snapSoundCard = " -s 0";
 	
-	var	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS=\"-d -h " + streamHost + " -s " + snapSoundCard + "\"|g' /etc/default/snapclient";
+	var cli_commands = (self.config.get('client_cli') == undefined ? '' : self.config.get('client_cli'));
+	
+	var	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS=\"-d -h " + streamHost + snapSoundCard + cli_commands + "\"|g' /etc/default/snapclient";
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)
@@ -977,7 +994,8 @@ ControllerSnapCast.prototype.getAlsaCards = function () {
 	try {
 		var soundCardDir = '/proc/asound/';
 		var soundFiles = fs.readdirSync(soundCardDir);
-
+		cards.push({id: 99, hw: "", name: "Omit soundcard parameter"});
+		
 		for (var i = 0; i < soundFiles.length; i++) {
 
 			if (soundFiles[i].indexOf('card') >= 0 && soundFiles[i] != 'cards'){
