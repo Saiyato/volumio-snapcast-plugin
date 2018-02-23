@@ -7,7 +7,7 @@ Volumio 2 SnapCast plugin, to easily manage SnapCast functionality
 2. Download .zip of repository and unzip or clone repository
 3. cd into plugin directory
 4. Type the command: volumio plugin install
-5. Wait a few minutes for message sayinginstall was successful.
+5. Wait a few minutes for message saying install was successful.
 6. Login to Volumio IU
 7. Configure the output format (sampling, bit depth, codec, etc.).
 8. Configure the soundcard for the client.
