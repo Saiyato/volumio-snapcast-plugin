@@ -1,20 +1,22 @@
-# volumio-snapcast-plugin
+#volumio-snapcast-plugin
 Volumio 2 SnapCast plugin, to easily manage SnapCast functionality
 
 ## Quick start
 
 1. ssh into server
 2. Download .zip of repository and unzip or clone repository
-3. cd into plugin directory
-4. Type the command: volumio plugin install
-5. Wait a few minutes for message saying install was successful.
-6. Login to Volumio IU
-7. Configure the output format (sampling, bit depth, codec, etc.).
-8. Configure the soundcard for the client.
-9. In the case of a slave device disable to the server and connect to the running server;
+3. cd into volumio-snapcast-plugin directory
+4. Remove the volumio-snapcast-plugin.zip
+	if you don't do this, the install will fail because it will try and mv two zips, volumio-snapcast-plugin-zip and the one created by the next command (snapcast.zip) to one location in /tmp.
+5. Type the command: volumio plugin install
+6. Wait a few minutes for message saying install was successful.
+7. Login to Volumio IU
+8. Configure the output format (sampling, bit depth, codec, etc.).
+9. Configure the soundcard for the client.
+10. In the case of a slave device disable to the server and connect to the running server;
   a. This can be either a Volumio host (drop down) or any other SnapCast server (define custom host -> fill in the IP-address)
   b. You cannot select a stream from within the plugin at this time, you can use the Android app for this. Default the first stream will be selected; in the case of this plugin that will be the MPD stream.
-10. Enjoy in-sync music in high fidelity.
+11. Enjoy in-sync music in high fidelity.
 
 The package will install both the client and server, you can en- or disable any component in the plugin settings.
 
