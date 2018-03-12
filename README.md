@@ -8,6 +8,7 @@ Volumio 2 SnapCast plugin, to easily manage SnapCast functionality
 sudo wget -O volumio_install_from_zip.sh https://raw.githubusercontent.com/Saiyato/volumio-plugin-helper/master/volumio_install_from_zip.sh
 ```
 This will download the installation script.
+
 3. Execute the script (DO NOT USE sudo!) you've just downloaded using the below command:
 ```
 sh volumio_install_from_zip.sh Saiyato volumio-snapcast-plugin
@@ -21,6 +22,7 @@ You can use this install script for any plugin (if they are hosted separately), 
 sudo wget -O volumio_installer.sh https://raw.githubusercontent.com/Saiyato/volumio-snapcast-plugin/master/volumio_installer.sh
 ```
 This will download the installation script.
+
 3. Execute the script (DO NOT USE sudo!) you've just downloaded using the below command:
 ```
 sh volumio_installer.sh
