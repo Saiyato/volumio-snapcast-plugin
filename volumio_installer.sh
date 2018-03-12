@@ -18,7 +18,7 @@ rm -rf images
 rm -rf known_working_versions
 rm .gitattributes
 rm brainstorm.txt
-rm readme.md
+rm README.md
 rm snapcast.pptx
 rm volumio_installer.sh
 rm volumio-snapcast-plugin.zip
