@@ -6,7 +6,7 @@ Volumio 2 SnapCast plugin, to easily manage SnapCast functionality
 1. SSH into server
 2. Execute the below command:
 ```
-sudo wget -o volumio_installer.sh https://raw.githubusercontent.com/Saiyato/volumio-snapcast-plugin/master/volumio_installer.sh
+sudo wget -O volumio_installer.sh https://raw.githubusercontent.com/Saiyato/volumio-snapcast-plugin/master/volumio_installer.sh
 ```
 This will download the installation script.
 3. Execute the script you've just downloaded using the below command:
