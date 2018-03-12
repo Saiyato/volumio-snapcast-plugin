@@ -13,6 +13,7 @@ git clone https://github.com/Saiyato/volumio-snapcast-plugin /home/volumio/volum
 echo "Cleaning up the directory..."
 cd /home/volumio/volumio-snapcast-plugin
 rm -rf .git
+rm -rf examples
 rm -rf images
 rm -rf known_working_versions
 rm .gitattributes
