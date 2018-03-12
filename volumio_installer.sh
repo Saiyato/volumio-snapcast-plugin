@@ -19,6 +19,7 @@ rm .gitattributes
 rm brainstorm.txt
 rm readme.md
 rm snapcast.pptx
+rm volumio_installer.sh
 rm volumio-snapcast-plugin.zip
 
 echo "Installing plugin..."
