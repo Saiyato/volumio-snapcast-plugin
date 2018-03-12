@@ -1,7 +1,7 @@
 #volumio-snapcast-plugin
 Volumio 2 SnapCast plugin, to easily manage SnapCast functionality
 
-## Lazy installation
+## Lazy installation of unsanctioned versions
 
 1. SSH into server
 2. Execute the below command:
