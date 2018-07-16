@@ -50,7 +50,7 @@ if [ ! -f $INSTALLING ]; then
 	pcm.writeFile {
 		type file
 		slave.pcm null
-		file \"/tmp/spotififo\"
+		file \"/tmp/snapfifo\"
 		format \"raw\"
 	}
 	#ENDOFSNAPCAST
@@ -76,12 +76,14 @@ if [ ! -f $INSTALLING ]; then
 	pcm.writeFile {
 		type file
 		slave.pcm null
-		file \"/tmp/spotififo\"
+		file \"/tmp/snapfifo\"
 		format \"raw\"
 	}
 	#ENDOFSNAPCAST
 	" | sudo tee /etc/asound.conf
 	fi
+	
+	chmod g+w /etc/asound.conf
 	
 	# Don't touch this if volspotconnect (spotify-connect-web) plugin  is not installed
 	if [ -d "/data/plugins/music_service/volspotconnect/spotify-connect-web/etc" ];
@@ -91,6 +93,15 @@ if [ ! -f $INSTALLING ]; then
 		then
 			if [ -f "/data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf"];
 			then
+				# Add lines
+				sed -i -- '/slave.pcm spotoutf/a updateLine' /data/plugins/music_service/volspotconnect/asound.tmpl
+				sed -i -- '/slave.pcm spotoutf/a updateLine' /etc/asound.conf
+				# Update lines
+				sed -i -- 's|slave.pcm spotoutf|#slave.pcm spotoutf|g' /data/plugins/music_service/volspotconnect/asound.tmpl
+				sed -i -- 's|updateLine|slave.pcm writeFile|g' /data/plugins/music_service/volspotconnect/asound.tmpl
+				sed -i -- 's|slave.pcm spotoutf|#slave.pcm spotoutf|g' /etc/asound.conf
+				sed -i -- 's|updateLine|slave.pcm writeFile|g' /etc/asound.conf
+				chmod g+w /data/plugins/music_service/volspotconnect/asound.tmpl
 				rm /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
 			fi
 			ln -sf /etc/asound.conf /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
@@ -118,9 +129,19 @@ if [ ! -f $INSTALLING ]; then
 	systemctl disable snapclient.service
 
 	systemctl restart mpd
+	
+	# Remove files and replace them with symlinks
+	rm /etc/default/snapclient
+	rm /etc/default/snapserver
+	
+	ln -fs /data/plugins/miscellanea/snapcast/default/snapclient /etc/default/snapclient
+	ln -fs /data/plugins/miscellanea/snapcast/default/snapserver /etc/default/snapserver
 
-	sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=Volumio-MPD\&mode=read"|g' /etc/default/snapserver
-	sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS="-d -h 127.0.0.1 -s ALSA"|g' /etc/default/snapclient
+	sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=Volumio-MPD\&mode=read"|g' /data/plugins/miscellanea/snapcast/default/snapserver
+	sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS="-d -h 127.0.0.1 -s ALSA"|g' /data/plugins/miscellanea/snapcast/default/snapclient
+	
+	sed -i -- '/slave.pmc spotoutf/a slave.pcm writeFile' /etc/asound.conf
+	sed -i -- 's|slave.pmc spotoutf|#slave.pcm spotoutf|g' /etc/asound.conf
 	
 	systemctl stop snapserver
 	systemctl stop snapclient

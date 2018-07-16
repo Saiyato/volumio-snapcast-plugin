@@ -479,7 +479,7 @@ ControllerSnapCast.prototype.restartService = function (serviceName, boot)
 	}
 
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.stopService = function (serviceName)
 {
@@ -502,7 +502,7 @@ ControllerSnapCast.prototype.stopService = function (serviceName)
 	});
 
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.updateBootConfig = function (data) 
 {
@@ -510,7 +510,7 @@ ControllerSnapCast.prototype.updateBootConfig = function (data)
 	var defer = libQ.defer();	
 
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.updateSnapServer = function (data)
 {
@@ -540,7 +540,7 @@ ControllerSnapCast.prototype.updateSnapServer = function (data)
 	})
 	
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.updateSnapServerSpotify = function (data)
 {
@@ -579,7 +579,7 @@ ControllerSnapCast.prototype.updateSnapServerSpotify = function (data)
 	})
 	
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.updateSnapClient = function (data)
 {
@@ -610,7 +610,7 @@ ControllerSnapCast.prototype.updateSnapClient = function (data)
 	})
 	
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.updateMPDConfig = function (data)
 {
@@ -645,7 +645,7 @@ ControllerSnapCast.prototype.updateMPDConfig = function (data)
 	self.logger.info("Successfully patched mpd.conf");
 	
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 {
@@ -696,7 +696,7 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 		self.replaceStringInFile("effects", "effects = rate " + self.config.get('spotify_sample_rate') + "; channels " + self.config.get('spotify_channels'), "/etc/spopd.conf");
 	}
 		
-	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d " + mpdPipe + spotifyPipe + cli_commands + "\"|g' /etc/default/snapserver";
+	var command = "/bin/sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS=\"-d " + mpdPipe + spotifyPipe + ' ' + cli_commands + "\"|g' /data/plugins/miscellanea/snapcast/default/snapserver";
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)
@@ -706,7 +706,7 @@ ControllerSnapCast.prototype.updateSnapServerConfig = function ()
 	});
 	
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.updateSnapClientConfig = function (data)
 {
@@ -732,7 +732,7 @@ ControllerSnapCast.prototype.updateSnapClientConfig = function (data)
 	if(data['custom_host_id'] && data['host_id'] != undefined && data['host_id'] != "")
 		hostID = " --hostID " + data['host_id'];
 	
-	var	command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS=\"-d" + streamHost + snapSoundCard + hostID + cli_commands +"\"|g' /etc/default/snapclient";
+	var	command = "/bin/sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS=\"-d" + streamHost + snapSoundCard + hostID + ' ' + cli_commands +"\"|g' /data/plugins/miscellanea/snapcast/default/snapclient";
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)
@@ -742,7 +742,7 @@ ControllerSnapCast.prototype.updateSnapClientConfig = function (data)
 	});
 	
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.generateMPDUpdateScript = function()
 {
@@ -776,7 +776,7 @@ ControllerSnapCast.prototype.generateMPDUpdateScript = function()
 		});
 		
 		return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.patchAsoundConfig = function()
 {
@@ -794,7 +794,7 @@ ControllerSnapCast.prototype.patchAsoundConfig = function()
 	self.createAsoundConfig(pluginName, replacementDictionary)
 	.then(function (touchFile) {
 		var edefer = libQ.defer();
-		exec("/bin/echo volumio | /usr/bin/sudo -S /bin/touch /etc/asound.conf", {uid:1000, gid:1000}, function (error, stout, stderr) {
+		exec("/bin/touch /etc/asound.conf", {uid:1000, gid:1000}, function (error, stout, stderr) {
 			if(error)
 			{
 				console.log(stderr);
@@ -811,7 +811,7 @@ ControllerSnapCast.prototype.patchAsoundConfig = function()
 	})
 	.then(function (clear_current_asound_config) {
 		var edefer = libQ.defer();
-		exec("/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- '/#" + pluginName.toUpperCase() + "/,/#ENDOF" + pluginName.toUpperCase() + "/d' /etc/asound.conf", {uid:1000, gid:1000}, function (error, stout, stderr) {
+		exec("/bin/sed -i -- '/#" + pluginName.toUpperCase() + "/,/#ENDOF" + pluginName.toUpperCase() + "/d' /etc/asound.conf", {uid:1000, gid:1000}, function (error, stout, stderr) {
 			if(error)
 			{
 				console.log(stderr);
@@ -828,7 +828,7 @@ ControllerSnapCast.prototype.patchAsoundConfig = function()
 	})
 	.then(function (copy_new_config) {
 		var edefer = libQ.defer();
-		var cmd = "/bin/echo volumio | /usr/bin/sudo -S /bin/cat /data/plugins/" + pluginCategory + "/" + pluginName + "/asound.section >> /etc/asound.conf\nalsactl -L -R restore";
+		var cmd = "/bin/cat /data/plugins/" + pluginCategory + "/" + pluginName + "/asound.section >> /etc/asound.conf\nalsactl -L -R restore";
 		fs.writeFile(__dirname + "/" + pluginName.toLowerCase() + "_asound_patch.sh", cmd, 'utf8', function (err) {
 			if (err)
 			{
@@ -848,7 +848,7 @@ ControllerSnapCast.prototype.patchAsoundConfig = function()
 	
 	self.commandRouter.pushToastMessage('success', "Successful push", "Successfully pushed new ALSA configuration");
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.createAsoundConfig = function(pluginName, replacements)
 {
@@ -878,7 +878,7 @@ ControllerSnapCast.prototype.createAsoundConfig = function(pluginName, replaceme
 	});
 	
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 {
@@ -889,8 +889,29 @@ ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 
 	if(imp == "volspotconnect1")
 	{
-		self.replaceStringInFile("--playback_device", "-o snapcast $\\{familyshare\\} \\&", "/data/plugins/music_service/volspotconnect/volspotconnect.tmpl");
-		defer.resolve();
+		self.replaceStringInFile("--playback_device", "-o snapcast $\\{familyshare\\} \\&", "/data/plugins/music_service/volspotconnect/volspotconnect.tmpl")
+		.then(function(addLines){
+			// sed -- '/slave.pcm spotoutf/a updateLine' /data/plugins/music_service/volspotconnect/asound.tmpl
+			self.appendStringToFile("slave.pcm spotoutf", "updateLine", "/data/plugins/music_service/volspotconnect/asound.tmpl");
+			self.appendStringToFile("slave.pcm spotoutf", "updateLine", "/etc/asound.conf");
+			defer.resolve(addLines);
+		})
+		.then(function(editLines){
+			// sed -- 's|updateLine|slave.pcm writeFile|g' /data/plugins/music_service/volspotconnect/asound.tmpl
+			self.replaceStringInFile("updateLine", "slave.pcm writeFile", "/data/plugins/music_service/volspotconnect/asound.tmpl");
+			// sed -- 's|slave.pcm spotoutf|#slave.pcm spotoutf|g' /data/plugins/music_service/volspotconnect/asound.tmpl
+			self.replaceStringInFile("slave.pcm spotoutf", "#slave.pcm spotoutf", "/data/plugins/music_service/volspotconnect/asound.tmpl");
+			
+			self.replaceStringInFile("updateLine", "slave.pcm writeFile", "/etc/asound.conf");
+			self.replaceStringInFile("slave.pcm spotoutf", "#slave.pcm spotoutf", "/etc/asound.conf");
+			
+			defer.resolve(editLines);
+		})
+		.fail(function()
+		{
+			defer.reject(new Error());
+		});
+
 	}
 	else if (imp == "volspotconnect2")
 	{
@@ -923,7 +944,7 @@ ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 	self.commandRouter.broadcastMessage("openModal", responseData);
 
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.updateSnapEnvironment = function(data)
 {
@@ -944,14 +965,14 @@ ControllerSnapCast.prototype.updateSnapEnvironment = function(data)
 	}
 	
 	return defer.resolve();
-}
+};
 
 ControllerSnapCast.prototype.executeShellScript = function (shellScript)
 {
 	var self = this;
 	var defer = libQ.defer();
 
-	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sh " + shellScript;
+	var command = "/bin/sh " + shellScript;
 	self.logger.info("CMD: " + command);
 	
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
@@ -968,7 +989,7 @@ ControllerSnapCast.prototype.executeShellScript = function (shellScript)
 
 	
 	return defer.promise;
-}
+};
 
 ControllerSnapCast.prototype.replaceStringInFile = function (pattern, value, inFile)
 {
@@ -981,7 +1002,7 @@ ControllerSnapCast.prototype.replaceStringInFile = function (pattern, value, inF
 	else
 		castValue = value;
 
-	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|" + pattern + ".*|" + castValue + "|g' " + inFile;
+	var command = "/bin/sed -i -- 's|" + pattern + ".*|" + castValue + "|g' " + inFile;
 
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)
@@ -991,10 +1012,33 @@ ControllerSnapCast.prototype.replaceStringInFile = function (pattern, value, inF
 	});
 	
 	return defer.promise;
-}
+};
+
+ControllerSnapCast.prototype.appendStringToFile = function (pattern, value, inFile)
+{
+	var self = this;
+	var defer = libQ.defer();
+	var castValue;
+	
+	if(value == true || value == false)
+			castValue = ~~value;
+	else
+		castValue = value;
+
+	var command = "/bin/sed -i -- '/" + pattern + ".*/a " + castValue + "' " + inFile;
+
+	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
+		if(error)
+			console.log(stderr);
+
+		defer.resolve();
+	});
+	
+	return defer.promise;
+};
 
 ControllerSnapCast.prototype.getAlsaCards = function () {
-	var self=this;
+	var self = this;
 	var cards = [];
 	var multi = false;
 	var carddata = fs.readJsonSync(('/volumio/app/plugins/audio_interface/alsa_controller/cards.json'),  'utf8', {throws: false});
@@ -1056,14 +1100,14 @@ ControllerSnapCast.prototype.getCardinfo = function (cardnum) {
 	}
 	var cardinfo = {'id':cardnum,'name':infoname};
 	return cardinfo;
-}
+};
 
 ControllerSnapCast.prototype.getVolumioInstances = function () {
 	var self = this;
 	var results = self.commandRouter.executeOnPlugin('system_controller', 'volumiodiscovery', 'getDevices', '');
 	
 	return results;
-}
+};
 
 ControllerSnapCast.prototype.getSnapServerStatus = function (host, callback) {
 	var self = this;
@@ -1093,7 +1137,7 @@ ControllerSnapCast.prototype.getSnapServerStatus = function (host, callback) {
 			}
 		}
 	 });
-}
+};
 
 ControllerSnapCast.prototype.getSnapServerClientsAndGroups = function (host)
 {
@@ -1124,7 +1168,7 @@ ControllerSnapCast.prototype.getSnapServerClientsAndGroups = function (host)
 			}
 		}
 	});
-}
+};
 
 ControllerSnapCast.prototype.setClientStream = function (host, client_id, stream_id)
 {
@@ -1153,7 +1197,7 @@ ControllerSnapCast.prototype.setClientStream = function (host, client_id, stream
 	});
 	
 	return libQ.resolve();
-}
+};
 
 ControllerSnapCast.prototype.updateVolume = function (data) {
 	var self = this;
@@ -1178,7 +1222,7 @@ ControllerSnapCast.prototype.updateVolume = function (data) {
 	}
 	
 	return libQ.resolve();
-}
+};
 
 ControllerSnapCast.prototype.isValidJSON = function (str) 
 {
@@ -1193,4 +1237,4 @@ ControllerSnapCast.prototype.isValidJSON = function (str)
         return false;
     }
     return true;
-}
+};

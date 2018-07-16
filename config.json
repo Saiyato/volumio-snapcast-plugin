@@ -93,7 +93,7 @@
   },
   "spotify_pipe": {
     "type": "string",
-    "value": "/tmp/spotififo"
+    "value": "/tmp/snapfifo"
   },
   "spotify_pipe_name": {
     "type": "string",
