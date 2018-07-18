@@ -39,13 +39,7 @@ if [ ! -f $INSTALLING ]; then
 	}
 
 	pcm.snapConverter {
-		type rate
-		slave {
-			pcm writeFile # Direct to the plugin which will write to a file
-			format S16_LE
-			rate 48000
-		}
-	}
+		
 
 	pcm.writeFile {
 		type file
@@ -64,15 +58,6 @@ if [ ! -f $INSTALLING ]; then
 		slave.pcm snapConverter
 	}
 
-	pcm.snapConverter {
-		type rate
-		slave {
-			pcm writeFile # Direct to the plugin which will write to a file
-			format S16_LE
-			rate 48000
-		}
-	}
-
 	pcm.writeFile {
 		type file
 		slave.pcm null
@@ -88,20 +73,21 @@ if [ ! -f $INSTALLING ]; then
 	# Don't touch this if volspotconnect (spotify-connect-web) plugin  is not installed
 	if [ -d "/data/plugins/music_service/volspotconnect/spotify-connect-web/etc" ];
 	then
+		# Add lines
+		sed -i -- '/slave.pcm spotoutf/a updateLine' /data/plugins/music_service/volspotconnect/asound.tmpl
+		sed -i -- '/slave.pcm spotoutf/a updateLine' /etc/asound.conf
+		# Update lines
+		sed -i -- 's|slave.pcm spotoutf|#slave.pcm spotoutf|g' /data/plugins/music_service/volspotconnect/asound.tmpl
+		sed -i -- 's|updateLine|slave.pcm writeFile|g' /data/plugins/music_service/volspotconnect/asound.tmpl
+		sed -i -- 's|slave.pcm spotoutf|#slave.pcm spotoutf|g' /etc/asound.conf
+		sed -i -- 's|updateLine|slave.pcm writeFile|g' /etc/asound.conf
+		chmod g+w /data/plugins/music_service/volspotconnect/asound.tmpl
+	
 		# Fix chrooted spotify-connect-web
 		if ! grep -q "asound.conf" /data/plugins/music_service/volspotconnect/spotify-connect-web/etc ;
 		then
 			if [ -f "/data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf"];
-			then
-				# Add lines
-				sed -i -- '/slave.pcm spotoutf/a updateLine' /data/plugins/music_service/volspotconnect/asound.tmpl
-				sed -i -- '/slave.pcm spotoutf/a updateLine' /etc/asound.conf
-				# Update lines
-				sed -i -- 's|slave.pcm spotoutf|#slave.pcm spotoutf|g' /data/plugins/music_service/volspotconnect/asound.tmpl
-				sed -i -- 's|updateLine|slave.pcm writeFile|g' /data/plugins/music_service/volspotconnect/asound.tmpl
-				sed -i -- 's|slave.pcm spotoutf|#slave.pcm spotoutf|g' /etc/asound.conf
-				sed -i -- 's|updateLine|slave.pcm writeFile|g' /etc/asound.conf
-				chmod g+w /data/plugins/music_service/volspotconnect/asound.tmpl
+			then				
 				rm /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
 			fi
 			ln -sf /etc/asound.conf /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
@@ -112,7 +98,7 @@ if [ ! -f $INSTALLING ]; then
 	alsactl restore	
 
 	sed -i -- 's|.*enabled.*|    enabled         "yes"|g' /etc/mpd.conf
-	sed -i -- 's|.*format.*|    format          "48000:16:2"|g' /etc/mpd.conf
+	sed -i -- 's|.*format.*|    format          "44100:16:2"|g' /etc/mpd.conf
 
 	# Disable standard output to ALSA
 	ALSA_ENABLED=$(sed -n "/.*type.*\"alsa\"/{n;p}" /etc/mpd.conf)
@@ -137,7 +123,7 @@ if [ ! -f $INSTALLING ]; then
 	ln -fs /data/plugins/miscellanea/snapcast/default/snapclient /etc/default/snapclient
 	ln -fs /data/plugins/miscellanea/snapcast/default/snapserver /etc/default/snapserver
 
-	sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=Volumio-MPD\&mode=read"|g' /data/plugins/miscellanea/snapcast/default/snapserver
+	sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=Volumio-MPD\&mode=read&sampleformat=44100:16:2"|g' /data/plugins/miscellanea/snapcast/default/snapserver
 	sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS="-d -h 127.0.0.1 -s ALSA"|g' /data/plugins/miscellanea/snapcast/default/snapclient
 	
 	sed -i -- '/slave.pmc spotoutf/a slave.pcm writeFile' /etc/asound.conf
