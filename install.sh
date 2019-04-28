@@ -17,7 +17,7 @@ if [ ! -f $INSTALLING ]; then
 	if [ $cpu = "armv6l" ] || [ $cpu = "armv7l" ]; then
 		wget $(curl -s https://api.github.com/repos/badaix/snapcast/releases/latest | grep 'armhf' | cut -d\" -f4) -P /home/volumio/snapcast
 	elif [ $cpu = "i686" ]; then
-		wget $(curl -s https://api.github.com/repos/badaix/snapcast/releases/latest | grep 'armhf' | cut -d\" -f4) -P /home/volumio/snapcast
+		wget $(curl -s https://api.github.com/repos/Saiyato/volumio-snapcast-plugin/releases/latest | grep 'i386' | cut -d\" -f4) -P /home/volumio/snapcast
 	elif [ $cpu = "x86_64" ]; then
 		echo "Not yet supported, working on the packages..."
 	else 
