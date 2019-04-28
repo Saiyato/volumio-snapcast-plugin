@@ -6,10 +6,23 @@ if [ ! -f $INSTALLING ]; then
 
 	touch $INSTALLING
 	apt-get update
+	
+	echo "Detecting cpu"
+	cpu=$(lscpu | awk 'FNR == 1 {print $2}')
+	echo "cpu: " $cpu
 
 	# Download latest SnapCast packages
 	mkdir /home/volumio/snapcast
-	wget $(curl -s https://api.github.com/repos/badaix/snapcast/releases/latest | grep 'armhf' | cut -d\" -f4) -P /home/volumio/snapcast
+	
+	if [ $cpu = "armv6l" ] || [ $cpu = "armv7l" ]; then
+		wget $(curl -s https://api.github.com/repos/badaix/snapcast/releases/latest | grep 'armhf' | cut -d\" -f4) -P /home/volumio/snapcast
+	elif [ $cpu = "i686" ]; then
+		wget $(curl -s https://api.github.com/repos/badaix/snapcast/releases/latest | grep 'armhf' | cut -d\" -f4) -P /home/volumio/snapcast
+	elif [ $cpu = "x86_64" ]; then
+		echo "Not yet supported, working on the packages..."
+	else 
+		echo "This cpu is not yet supported, you must build the snap*-packages yourself. Detected cpu: " $cpu
+	fi
 
 	# Backup old snap* installations
 	mv /usr/sbin/snapclient /usr/sbin/snapclient.bak
