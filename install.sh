@@ -52,7 +52,13 @@ if [ ! -f $INSTALLING ]; then
 	}
 
 	pcm.snapConverter {
-		
+		type rate
+		slave {
+			pcm writeFile # Direct to the plugin which will write to a file
+			format S16_LE
+			rate 48000
+		}
+	}	
 
 	pcm.writeFile {
 		type file
@@ -69,6 +75,15 @@ if [ ! -f $INSTALLING ]; then
 	pcm.!snapcast {
 		type plug
 		slave.pcm snapConverter
+	}
+	
+	pcm.snapConverter {
+		type rate
+		slave {
+			pcm writeFile # Direct to the plugin which will write to a file
+			format S16_LE
+			rate 48000
+		}
 	}
 
 	pcm.writeFile {
