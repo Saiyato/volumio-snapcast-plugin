@@ -136,6 +136,11 @@ if [ ! -f $INSTALLING ]; then
 	 *) sed -i -- 's|.*type.*alsa.*|&\n\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ enabled\ \ \ \ \ \ \ \ \ "no"|g' /etc/mpd.conf ;;
 	esac
 
+	# Create the systemd unit file, if it doesn't already exists
+	wget -O /etc/init.d/snapclient https://raw.githubusercontent.com/Saiyato/volumio-snapcast-plugin/master/unit/snapclient
+	wget -O /etc/init.d/snapserver https://raw.githubusercontent.com/Saiyato/volumio-snapcast-plugin/master/unit/snapserver
+	systemctl daemon-reload
+
 	# Edit the systemd units
 	systemctl enable /data/plugins/miscellanea/snapcast/spotififo.service
 	systemctl start spotififo.service
