@@ -139,6 +139,8 @@ if [ ! -f $INSTALLING ]; then
 	# Create the systemd unit file, if it doesn't already exists
 	wget -O /etc/init.d/snapclient https://raw.githubusercontent.com/Saiyato/volumio-snapcast-plugin/master/unit/snapclient
 	wget -O /etc/init.d/snapserver https://raw.githubusercontent.com/Saiyato/volumio-snapcast-plugin/master/unit/snapserver
+	chmod 755 /etc/init.d/snapclient
+	chmod 755 /etc/init.d/snapserver
 	systemctl daemon-reload
 
 	# Edit the systemd units
