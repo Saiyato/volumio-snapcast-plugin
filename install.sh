@@ -136,9 +136,18 @@ if [ ! -f $INSTALLING ]; then
 	 *) sed -i -- 's|.*type.*alsa.*|&\n\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ enabled\ \ \ \ \ \ \ \ \ "no"|g' /etc/mpd.conf ;;
 	esac
 
+	# Remove files and replace them with symlinks
+	rm /etc/default/snapclient
+	rm /etc/default/snapserver
+	
+	ln -fs /data/plugins/miscellanea/snapcast/default/snapclient /etc/default/snapclient
+	ln -fs /data/plugins/miscellanea/snapcast/default/snapserver /etc/default/snapserver
+
 	# Create the systemd unit file, if it doesn't already exists
-	wget -O /etc/init.d/snapclient https://raw.githubusercontent.com/Saiyato/volumio-snapcast-plugin/master/unit/snapclient
-	wget -O /etc/init.d/snapserver https://raw.githubusercontent.com/Saiyato/volumio-snapcast-plugin/master/unit/snapserver
+	#wget -O /etc/init.d/snapclient https://raw.githubusercontent.com/Saiyato/volumio-snapcast-plugin/master/unit/snapclient
+	#wget -O /etc/init.d/snapserver https://raw.githubusercontent.com/Saiyato/volumio-snapcast-plugin/master/unit/snapserver
+	ln -fs /data/plugins/miscellanea/snapcast/unit/snapclient /etc/init.d/snapclient
+	ln -fs /data/plugins/miscellanea/snapcast/unit/snapserver /etc/init.d/snapserver
 	chmod 755 /etc/init.d/snapclient
 	chmod 755 /etc/init.d/snapserver
 	systemctl daemon-reload
@@ -150,13 +159,6 @@ if [ ! -f $INSTALLING ]; then
 	systemctl disable snapclient.service
 
 	systemctl restart mpd
-	
-	# Remove files and replace them with symlinks
-	rm /etc/default/snapclient
-	rm /etc/default/snapserver
-	
-	ln -fs /data/plugins/miscellanea/snapcast/default/snapclient /etc/default/snapclient
-	ln -fs /data/plugins/miscellanea/snapcast/default/snapserver /etc/default/snapserver
 
 	sed -i -- 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=Volumio-MPD\&mode=read&sampleformat=44100:16:2"|g' /data/plugins/miscellanea/snapcast/default/snapserver
 	sed -i -- 's|^SNAPCLIENT_OPTS.*|SNAPCLIENT_OPTS="-d -h 127.0.0.1 -s ALSA"|g' /data/plugins/miscellanea/snapcast/default/snapclient
