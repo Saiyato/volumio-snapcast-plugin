@@ -168,7 +168,8 @@ if [ ! -f $INSTALLING ]; then
 	
 	systemctl stop snapserver
 	systemctl stop snapclient
-	
+
+	rm -rf /home/volumio/snapcast	
 	rm $INSTALLING
 
 	#required to end the plugin install
