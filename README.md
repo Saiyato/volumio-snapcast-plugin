@@ -7,7 +7,7 @@ Volumio 2 SnapCast plugin, to easily manage SnapCast functionality
 2. Download .zip of repository and unzip or clone repository
 3. CD into volumio-snapcast-plugin directory
 4. Remove the volumio-snapcast-plugin.zip
-	if you don't do this, the install will fail because it will try and mv two zips, volumio-snapcast-plugin-zip and the one created by the next command (snapcast.zip) to one location in /tmp.
+	if you don't do this, the install will fail because it will try and mv two zips, volumio-snapcast-plugin.zip and the one created by the next command (snapcast.zip) to one location in /tmp.
 5. Type the command: volumio plugin install
 6. Wait a few minutes for message saying install was successful.
 7. Login to Volumio IU
