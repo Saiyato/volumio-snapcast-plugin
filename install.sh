@@ -19,7 +19,7 @@ if [ ! -f $INSTALLING ]; then
 	if [ $ARCH = "armv6l" ] || [ $ARCH = "armv7l" ]; then
 		if [ $DEBIAN_VERSION = "jessie" ]; then
 			echo "Defaulting to known working version of SnapCast components (0.15.0)"
-			cp -f binaries/snap*.deb /home/volumio/snapcast
+			cp -f /data/plugins/miscellanea/snapcast/binaries/snap*.deb /home/volumio/snapcast
 		else
 			echo "Fetching latest releases of SnapCast components..."
 			wget $(curl -s https://api.github.com/repos/badaix/snapcast/releases/latest | grep 'armhf' | cut -d\" -f4) -P /home/volumio/snapcast
