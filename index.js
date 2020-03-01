@@ -915,7 +915,7 @@ ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 	}
 	else if (imp == "volspotconnect2")
 	{
-		self.replaceStringInFile("--device ${outdev}", "--backend pipe --device " + self.config.get('spotify_pipe') + " $\\{normalvolume\\} \\", "/data/plugins/music_service/volspotconnect2/volspotconnect2.tmpl");
+		self.replaceStringInFile("--device ${outdev}", "--backend pipe --device " + self.config.get('spotify_pipe') + " ${normalvolume} \\\\", "/data/plugins/music_service/volspotconnect2/volspotconnect2.tmpl");
 		defer.resolve();
 	}
 	else if (imp == "spop")
@@ -930,7 +930,7 @@ ControllerSnapCast.prototype.updateSpotifyImplementation = function()
 	
 	var responseData = {
 	title: 'Configuration required [no translation available]',
-	message: 'Changes have been made to the Spotify implementation template, you need to save the settings in the corresponding plugin again for the changes to take effect. [no translation available]',
+	message: 'Changes have been made to the Spotify implementation template, you need to save the settings in, or restart the corresponding plugin again for the changes to take effect. [no translation available]',
 	size: 'lg',
 	buttons: [{
 				name: self.commandRouter.getI18nString('COMMON.CONTINUE'),

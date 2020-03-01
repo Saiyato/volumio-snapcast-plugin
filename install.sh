@@ -128,6 +128,12 @@ if [ ! -f $INSTALLING ]; then
 			ln -sf /etc/asound.conf /data/plugins/music_service/volspotconnect/spotify-connect-web/etc/asound.conf
 		fi
 	fi
+	
+	if [ -d "/data/plugins/music_service/volspotconnect2" ];
+	then
+		# Update volspotconnect2 template file
+		sed -i -- 's|--device ${outdev}.*|--backend pipe --device /tmp/snapfifo ${normalvolume} \\|g' /data/plugins/music_service/volspotconnect2/volspotconnect2.tmpl
+	fi
 
 	# Reload ALSA with the new config
 	alsactl restore	
