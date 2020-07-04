@@ -1,4 +1,4 @@
-#volumio-snapcast-plugin
+# volumio-snapcast-plugin
 Volumio 2 SnapCast plugin, to easily manage SnapCast functionality
 
 ## Quick start
