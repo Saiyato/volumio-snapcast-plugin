@@ -137,8 +137,8 @@ if [ ! -f $INSTALLING ]; then
 	if [ -f "/data/plugins/music_service/volspotconnect2/volspotify.tmpl" ];
 	then
 		# Update volspotconnect2 template file
-		sed -i -- 's|device = \'${outdev}\'.*|device = \'/tmp/snapfifo\'\\|g' /data/plugins/music_service/volspotconnect2/volspotconnect2.tmpl
-		sed -i -- 's|backend = \'alsa\'.*|backend = \'pipe\'\\|g' /data/plugins/music_service/volspotconnect2/volspotconnect2.tmpl
+		sed -i -- 's|device = \x27${outdev}\x27.*|device = \x27/tmp/snapfifo\x27|g' /data/plugins/music_service/volspotconnect2/volspotify.tmpl
+		sed -i -- 's|backend = \x27alsa\x27.*|backend = \x27pipe\x27|g' /data/plugins/music_service/volspotconnect2/volspotify.tmpl
 	fi
 
 	# Reload ALSA with the new config
