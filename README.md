@@ -13,7 +13,7 @@ Volumio 2 SnapCast plugin, to easily manage SnapCast functionality
 7. Login to Volumio IU
 8. Configure the output format (sampling, bit depth, codec, etc.).
 9. Configure the soundcard for the client.
-10. In the case of a slave device disable to the server and connect to the running server;
+10. In the case of a slave device disable the server and connect to the running server;
   a. This can be either a Volumio host (drop down) or any other SnapCast server (define custom host -> fill in the IP-address)
   b. You cannot select a stream from within the plugin at this time, you can use the Android app for this. Default the first stream will be selected; in the case of this plugin that will be the MPD stream.
 11. Enjoy in-sync music in high fidelity.
