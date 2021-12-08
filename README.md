@@ -1,3 +1,8 @@
+# DISCONTINUED in favor of separate plugins
+
+SnapServer: https://github.com/Saiyato/volumio-snapserver-plugin
+SnapClient: https://github.com/Saiyato/volumio-snapclient-plugin
+
 # volumio-snapcast-plugin
 Volumio 2 SnapCast plugin, to easily manage SnapCast functionality
 
